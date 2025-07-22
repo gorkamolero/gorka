@@ -1,19 +1,9 @@
+import { ALL_COMMANDS } from './availableCommands';
+
 type CommandHandler = (args: string[]) => string;
 
 const commands: Record<string, CommandHandler> = {
-  '/help': () => `
-Available commands:
-  /help     - Show this help message
-  /about    - Learn about me
-  /work     - View my projects and work
-  /music    - Listen to my music
-  /contact  - Get in touch
-  /skills   - View my technical skills
-  /resume   - Download my resume
-  /clear    - Clear the terminal
-  
-Type anything else to chat with my AI assistant.
-`,
+  '/help': () => ALL_COMMANDS.join('\n'),
 
   '/about': () => `
 ╔═══════════════════════════════════════════╗
@@ -98,8 +88,6 @@ AI/ML:
 > Loading additional skills...
 `,
 
-  '/clear': () => 'CLEAR_TERMINAL',
-
   '/resume': () => `
 ╔═══════════════════════════════════════════╗
 ║              RESUME                       ║
@@ -130,16 +118,12 @@ AI/ML:
 `
 };
 
-export function handleCommand(input: string): string {
-  const trimmedInput = input.trim();
-  const [command, ...args] = trimmedInput.split(' ');
-  
+export function slashCommands(command: string, args: string[]): string {
   // Handle resume with format
   if (command === '/resume' && args.length > 0) {
     const format = args[0].toLowerCase();
     switch (format) {
       case 'pdf':
-        // In a real app, this would trigger a download
         return `
 > Initiating download: gorka_resume_2024.pdf
 > Size: 127KB
@@ -196,10 +180,5 @@ GitHub: github.com/gorkamolero
     return commands[command](args);
   }
   
-  // If not a command, prepare for AI chat (to be implemented)
-  if (trimmedInput.startsWith('/')) {
-    return `Command not found: ${command}\nType /help for available commands.`;
-  }
-  
-  return `AI chat coming soon. For now, try /help to see available commands.`;
+  return '';
 }

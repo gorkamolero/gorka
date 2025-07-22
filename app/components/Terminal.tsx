@@ -5,6 +5,7 @@ import { handleCommand } from '../lib/commands';
 import { useBootSequence } from '../hooks/useBootSequence';
 import { useCommandHistory } from '../hooks/useCommandHistory';
 import { useGeolocation } from '../hooks/useGeolocation';
+import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
 import CRTEffect from './CRTEffect';
 import TerminalHistory from './TerminalHistory';
 import TerminalInput from './TerminalInput';
@@ -13,12 +14,13 @@ export default function Terminal() {
   const [input, setInput] = useState('');
   const [hasInteracted, setHasInteracted] = useState(false);
   const terminalRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
   
   // Custom hooks
   const userCity = useGeolocation();
   const { history, setHistory, isBooting, showCursor } = useBootSequence(userCity);
   const { addCommand, navigateHistory } = useCommandHistory();
+  const { handleShortcut } = useKeyboardShortcuts({ input, setInput, setHistory, inputRef });
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -35,6 +37,11 @@ export default function Terminal() {
   }, [isBooting]);
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    // Handle shortcuts first
+    if (handleShortcut(e)) {
+      return;
+    }
+
     if (e.key === 'Enter') {
       if (input.trim()) {
         const trimmedInput = input.trim();
@@ -69,12 +76,12 @@ export default function Terminal() {
   return (
     <CRTEffect>
       <div 
-        className="min-h-screen bg-black text-green-400 font-mono p-4 overflow-hidden"
+        className="min-h-screen bg-black text-green-400 font-mono p-2 sm:p-4 overflow-hidden text-xs sm:text-sm"
         onClick={() => inputRef.current?.focus()}
       >
         <div 
           ref={terminalRef}
-          className="h-[calc(100vh-2rem)] overflow-y-auto scrollbar-hide"
+          className="h-[calc(100vh-1rem)] sm:h-[calc(100vh-2rem)] overflow-y-auto scrollbar-hide"
         >
           {/* Boot sequence with blinking cursor */}
           {isBooting && showCursor && (

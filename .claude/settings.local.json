@@ -8,7 +8,8 @@
       "Bash(rm:*)",
       "Bash(git remote add:*)",
       "Bash(pnpm lint:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(pnpm build:*)"
     ],
     "deny": []
   }
