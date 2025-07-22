@@ -9,6 +9,11 @@ interface CRTEffectProps {
 export default function CRTEffect({ children }: CRTEffectProps) {
   return (
     <div className="relative w-full h-screen overflow-hidden bg-black">
+      {/* Tron-style grid background */}
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        <div className="w-full h-full tron-grid"></div>
+      </div>
+
       {/* Screen curvature */}
       <div className="absolute inset-0 z-30 pointer-events-none">
         <div className="w-full h-full crt-curve"></div>

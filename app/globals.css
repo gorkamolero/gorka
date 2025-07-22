@@ -244,3 +244,40 @@ body {
 input {
   font-family: inherit;
 }
+
+/* Tron-style grid background */
+.tron-grid {
+  background-image: 
+    /* Vertical lines */
+    linear-gradient(to right, 
+      transparent 0%, 
+      transparent calc(100% - 1px), 
+      rgba(0, 255, 65, 0.03) calc(100% - 1px), 
+      rgba(0, 255, 65, 0.03) 100%
+    ),
+    /* Horizontal lines */
+    linear-gradient(to bottom, 
+      transparent 0%, 
+      transparent calc(100% - 1px), 
+      rgba(0, 255, 65, 0.03) calc(100% - 1px), 
+      rgba(0, 255, 65, 0.03) 100%
+    );
+  background-size: 80px 80px;
+  background-position: -1px -1px;
+  opacity: 0.5;
+}
+
+/* Add subtle perspective to the grid */
+.tron-grid::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to bottom, 
+    transparent 0%, 
+    rgba(0, 0, 0, 0.4) 100%
+  );
+  pointer-events: none;
+}
