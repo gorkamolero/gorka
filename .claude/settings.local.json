@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mv:*)",
+      "Bash(rmdir:*)",
+      "Bash(pnpm add:*)",
+      "Bash(pnpm remove:*)",
+      "Bash(rm:*)",
+      "Bash(git remote add:*)",
+      "Bash(pnpm lint:*)",
+      "Bash(git add:*)"
+    ],
+    "deny": []
+  }
+}
