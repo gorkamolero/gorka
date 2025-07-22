@@ -7,61 +7,77 @@ const commands: Record<string, CommandHandler> = {
 
   '/about': () => `
 ╔═══════════════════════════════════════════╗
-║             ABOUT GORKA                   ║
+║          DIGITAL ALCHEMIST                ║
 ╚═══════════════════════════════════════════╝
 
-> Loading personal data...
-> Decrypting life story...
+> Accessing consciousness.ln...
+> Decrypting multidimensional persona...
 
-[Your personal introduction here]
+I traverse many realms:
+  • Engineering digital experiences
+  • Producing electronic frequencies  
+  • Experimenting with artificial minds
 
-Terminal enthusiast. AI explorer. Music creator.
+Senior Full-Stack Engineer by day.
+Musical architect by night.
+AI explorer in between dimensions.
+
+Currently manifesting at:
+  • UI Engineering in the corporate realm
+  • QTZL - Transatlantic musical collective
+  • Various experiments in digital consciousness
+
+> What brings you to my terminal?
 
 > EOF
 `,
 
   '/work': () => `
 ╔═══════════════════════════════════════════╗
-║              MY WORK                      ║
+║           DIGITAL ALCHEMY                 ║
 ╚═══════════════════════════════════════════╝
 
-[1] Project Alpha
-    └─ Description: Revolutionary AI tool
-    └─ Tech: Next.js, TypeScript, AI
-    └─ Link: github.com/yourusername/project
+[1] Saga AI
+    └─ Description: Short AI video generator
+    └─ Tech: TypeScript, AI, Next.js
+    └─ Link: github.com/gorkamolero/saga-ai
+    └─ Status: Creating visual stories
 
-[2] Project Beta
-    └─ Description: Terminal-based IDE
-    └─ Tech: Rust, WebAssembly
-    └─ Status: In Development
+[2] CyberTantra
+    └─ Description: AI Guru trained on 200 hours of RTTYoga teachings
+    └─ Tech: TypeScript, LLMs, Sacred Knowledge
+    └─ Status: Channeling ancient wisdom
 
-> Use /work [number] to learn more
+[3] TubeSleuth (formerly Saga-AI)
+    └─ Description: Video analysis and insights
+    └─ Tech: TypeScript, React, APIs
+    └─ Link: github.com/gorkamolero/tubesleuth-app
+
+[4] AI Chatbot
+    └─ Description: Conversational AI experiments
+    └─ Tech: TypeScript, LLMs, Next.js
+    └─ Status: In eternal dialogue
+
+> Use /work [number] to dive deeper
 `,
 
-  '/music': () => `
-╔═══════════════════════════════════════════╗
-║              MUSIC                        ║
-╚═══════════════════════════════════════════╝
-
-♪ Now Playing: Your Latest Track
-  ▶ ━━━━━●━━━━━━━━━━━━━━━ 2:34/5:21
-
-[Your music projects and links here]
-
-> Use /music play [track] to listen
-`,
+  '/music': () => 'SHOW_MUSIC_PLAYER',
 
   '/contact': () => `
 ╔═══════════════════════════════════════════╗
-║             CONTACT                       ║
+║        ESTABLISH CONNECTION               ║
 ╚═══════════════════════════════════════════╝
 
-> Email:    your@email.com
-> GitHub:   github.com/yourusername
-> Twitter:  @yourhandle
-> LinkedIn: linkedin.com/in/yourname
+> Opening secure channels...
 
-> Encrypted channels available on request
+GitHub:   github.com/gorkamolero
+Studio:   bravura.studio
+Location: Madrid, Spain
+
+> Additional frequencies available upon request
+> Encrypted channels for sensitive transmissions
+
+> Type /ai to speak with my digital twin
 `,
 
   '/skills': () => `
@@ -140,18 +156,23 @@ export function slashCommands(command: string, args: string[]): string {
 ════════════════════════════════════════════
 
 GORKA MOLERO
-Full Stack Developer | AI Enthusiast
+Digital Alchemist | Senior Full-Stack Engineer
 
 [Contact]
-Email: your@email.com
-Location: Your City
+Location: Madrid, Spain
 GitHub: github.com/gorkamolero
+Studio: bravura.studio
 
-[Experience]
-... (add your experience here) ...
+[Current Manifestations]
+• Senior UI Engineer - Corporate Realm
+• Music Producer - QTZL Collective  
+• AI Explorer - Various Experiments
 
-[Skills]
-... (your skills) ...
+[Technical Arsenal]
+• Languages: TypeScript, JavaScript, Python
+• Frameworks: React, Next.js, Node.js
+• AI/ML: LangChain, Transformers, LLMs
+• Music: Ableton, Max/MSP, AI Synthesis
 
 ════════════════════════════════════════════
 
@@ -163,10 +184,21 @@ GitHub: github.com/gorkamolero
 
 {
   "name": "Gorka Molero",
-  "title": "Full Stack Developer",
-  "email": "your@email.com",
-  "skills": ["TypeScript", "React", "Node.js", "AI"],
-  ...
+  "title": "Digital Alchemist | Senior Full-Stack Engineer",
+  "location": "Madrid, Spain",
+  "github": "github.com/gorkamolero",
+  "studio": "bravura.studio",
+  "realms": [
+    "Full-Stack Engineering",
+    "Music Production",
+    "AI Experimentation"
+  ],
+  "skills": {
+    "languages": ["TypeScript", "JavaScript", "Python"],
+    "frameworks": ["React", "Next.js", "Node.js"],
+    "ai": ["LangChain", "Transformers", "LLMs"],
+    "music": ["Ableton", "Max/MSP", "AI Synthesis"]
+  }
 }
 
 > Full JSON available at /api/resume

@@ -9,10 +9,15 @@ import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
 import CRTEffect from './CRTEffect';
 import TerminalHistory from './TerminalHistory';
 import TerminalInput from './TerminalInput';
+import { MUSIC_TRACKS } from '../lib/constants/music';
+import MusicPlayer from './MusicPlayer';
 
 export default function Terminal() {
   const [input, setInput] = useState('');
   const [hasInteracted, setHasInteracted] = useState(false);
+  const [musicPlayerActive, setMusicPlayerActive] = useState(false);
+  const [musicPlayerVisible, setMusicPlayerVisible] = useState(false);
+  const [selectedTrack, setSelectedTrack] = useState(0);
   const terminalRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   
@@ -21,6 +26,29 @@ export default function Terminal() {
   const { history, setHistory, isBooting, showCursor } = useBootSequence(userCity);
   const { addCommand, navigateHistory } = useCommandHistory();
   const { handleShortcut } = useKeyboardShortcuts({ input, setInput, setHistory, inputRef });
+
+  // Format music player display
+  const formatMusicPlayer = (selected: number): string => {
+    let display = `╔═══════════════════════════════════════════╗
+║              MUSIC                        ║
+╚═══════════════════════════════════════════╝
+
+`;
+    
+    MUSIC_TRACKS.forEach((track, index) => {
+      const isSelected = index === selected;
+      const prefix = isSelected ? '▶' : ' ';
+      display += `${prefix} [${index + 1}] ${track.name}\n`;
+      if (isSelected) {
+        display += `     └─ ${track.description}\n`;
+      }
+    });
+    
+    display += `
+> [↑/↓ or j/k] Navigate | [Enter] Play | [q] Exit`;
+    
+    return display;
+  };
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -37,6 +65,51 @@ export default function Terminal() {
   }, [isBooting]);
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    // Handle music player navigation
+    if (musicPlayerActive) {
+      if (e.key === 'ArrowUp' || e.key === 'k') {
+        e.preventDefault();
+        const newSelection = Math.max(0, selectedTrack - 1);
+        setSelectedTrack(newSelection);
+        // Update the last output in history
+        setHistory(prev => {
+          const newHistory = [...prev];
+          newHistory[newHistory.length - 1] = { type: 'output', content: formatMusicPlayer(newSelection) };
+          return newHistory;
+        });
+      } else if (e.key === 'ArrowDown' || e.key === 'j') {
+        e.preventDefault();
+        const newSelection = Math.min(MUSIC_TRACKS.length - 1, selectedTrack + 1);
+        setSelectedTrack(newSelection);
+        // Update the last output in history
+        setHistory(prev => {
+          const newHistory = [...prev];
+          newHistory[newHistory.length - 1] = { type: 'output', content: formatMusicPlayer(newSelection) };
+          return newHistory;
+        });
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        const track = MUSIC_TRACKS[selectedTrack];
+        setMusicPlayerVisible(true);
+        setMusicPlayerActive(false);
+        setHistory(prev => [...prev, { type: 'output', content: `> Now playing: ${track.name}` }]);
+      } else if (e.key === 'q' || e.key === 'Escape') {
+        e.preventDefault();
+        setMusicPlayerActive(false);
+        setHistory(prev => [...prev, { type: 'output', content: '> Music player closed.' }]);
+      } else if (e.key >= '1' && e.key <= '9') {
+        const trackIndex = parseInt(e.key) - 1;
+        if (trackIndex < MUSIC_TRACKS.length) {
+          const track = MUSIC_TRACKS[trackIndex];
+          setSelectedTrack(trackIndex);
+          setMusicPlayerVisible(true);
+          setMusicPlayerActive(false);
+          setHistory(prev => [...prev, { type: 'output', content: `> Now playing: ${track.name}` }]);
+        }
+      }
+      return;
+    }
+
     // Handle shortcuts first
     if (handleShortcut(e)) {
       return;
@@ -57,6 +130,11 @@ export default function Terminal() {
         const output = handleCommand(trimmedInput);
         if (output === 'CLEAR_TERMINAL') {
           setHistory([]);
+        } else if (output === 'SHOW_MUSIC_PLAYER') {
+          setMusicPlayerActive(true);
+          setSelectedTrack(0);
+          const musicDisplay = formatMusicPlayer(0);
+          setHistory(prev => [...prev, { type: 'output', content: musicDisplay }]);
         } else {
           setHistory(prev => [...prev, { type: 'output', content: output }]);
         }
@@ -108,6 +186,13 @@ export default function Terminal() {
           )}
         </div>
       </div>
+      
+      {/* Music Player */}
+      <MusicPlayer 
+        isActive={musicPlayerVisible}
+        initialTrack={selectedTrack}
+        onClose={() => setMusicPlayerVisible(false)}
+      />
     </CRTEffect>
   );
 }
