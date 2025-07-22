@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import YouTube, { YouTubeProps } from 'react-youtube';
 import { MUSIC_TRACKS } from '../lib/constants/music';
 
@@ -78,14 +78,14 @@ export default function MusicPlayer({ isActive, initialTrack = 0, onClose }: Mus
     }
   };
 
-  const playTrack = (index: number) => {
+  const playTrack = useCallback((index: number) => {
     if (index !== currentTrack) {
       setIsLoading(true);
     }
     setCurrentTrack(index);
     setSelectedTrack(index);
     setIsPlaying(true);
-  };
+  }, [currentTrack]);
 
   // Keyboard navigation
   useEffect(() => {
@@ -129,12 +129,19 @@ export default function MusicPlayer({ isActive, initialTrack = 0, onClose }: Mus
           // Return focus to terminal without closing player
           document.querySelector<HTMLInputElement>('input[type="text"]')?.focus();
           break;
+        case 'c':
+          if (e.ctrlKey) {
+            e.preventDefault();
+            // Return focus to terminal without closing player
+            document.querySelector<HTMLInputElement>('input[type="text"]')?.focus();
+          }
+          break;
       }
     };
 
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [isActive, isMinimized, player, isPlaying, selectedTrack, onClose]);
+  }, [isActive, isMinimized, player, isPlaying, selectedTrack, onClose, playTrack]);
 
   if (!isActive) return null;
 
@@ -228,7 +235,7 @@ export default function MusicPlayer({ isActive, initialTrack = 0, onClose }: Mus
             {/* Track List */}
             <div className="bg-black border-t border-green-400 overflow-y-auto" style={{ maxHeight: '200px' }}>
               {MUSIC_TRACKS.map((track, index) => (
-                <>
+                <div key={index}>
                   {/* Add section headers */}
                   {index === 0 && (
                     <div className="text-green-400 text-xs font-mono px-3 pt-2 pb-1 opacity-70">
@@ -246,8 +253,7 @@ export default function MusicPlayer({ isActive, initialTrack = 0, onClose }: Mus
                     </div>
                   )}
                   <div
-                    key={index}
-                    ref={el => trackRefs.current[index] = el}
+                    ref={el => { trackRefs.current[index] = el; }}
                     onClick={() => playTrack(index)}
                     className={`px-3 py-2 cursor-pointer transition-all text-xs font-mono
                       ${selectedTrack === index 
@@ -258,14 +264,14 @@ export default function MusicPlayer({ isActive, initialTrack = 0, onClose }: Mus
                     <span className="mr-2">{currentTrack === index ? '▶' : selectedTrack === index ? '›' : ' '}</span>
                     [{index + 1}] {track.name}
                   </div>
-                </>
+                </div>
               ))}
             </div>
 
             {/* Controls */}
             <div className="bg-black border-t border-green-400 p-2 text-center">
               <div className="text-green-400 text-xs font-mono opacity-70">
-                [↑/↓] Navigate | [Enter] Play | [Space] Pause | [Tab] Terminal | [q] Close
+                [↑/↓] Navigate | [Enter] Play | [Space] Pause | [Tab/Ctrl+C] Terminal | [q] Close
               </div>
             </div>
           </>
