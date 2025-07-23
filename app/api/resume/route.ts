@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 
 const RESUME_DATA = {
   name: "Gorka Molero",
-  title: "Full-Stack Engineer, Consultant & AI Enthusiast",
+  title: "Engineer, Builder, Reality Hacker",
   location: "Madrid / Lisbon / Remote",
   contact: {
     github: "github.com/gorkamolero",

@@ -8,34 +8,35 @@ const commands: Record<string, CommandHandler> = {
   '/about': () => ({
     content: `
 ╔═══════════════════════════════════════════╗
-║        FULL-STACK ENGINEER                ║
+║            WHO IS GORKA?                  ║
 ╚═══════════════════════════════════════════╝
 
-> Initializing profile...
-> Loading experience matrix...
+> Accessing user profile...
+> Decrypting identity matrix...
 
-Full-Stack Engineer with a passion for:
-  • Building elegant web experiences
-  • AI/ML integration & exploration
-  • Electronic music production
-  • Creative coding intersections
+[STATUS: ENGINEER/BUILDER/SEEKER]
+[LOCATION: MADRID/LISBON/THE_CLOUD]
 
-Based between Madrid, Lisbon & Remote.
+CURRENT_MISSIONS:
+  • Frontend Engineer @ Roadie
+  • Building weird things that shouldn't exist
+  • QTZL netlabel - Latin electronic frequencies
+  • Training body & mind (MMA/Tantra)
 
-Current ventures:
-  • Web Developer at Roadie
-  • Co-founder at Maility (20K MRR)
-  • QTZL - Latin electronic music netlabel
-  • Various consulting projects
+CAPABILITIES:
+  • Code architect
+  • Music producer  
+  • AI whisperer
+  • Reality hacker
 
-Interests beyond code:
-  • Music production & DJing
-  • Chess, BJJ & Boxing
-  • Philosophy & meditation
-  • Crypto & Web3 exploration
+INTERESTS:
+  • Ancient wisdom meets new tech
+  • Music/Chess/MMA/Philosophy
+  • Breaking things to understand them
+  • Finding signal in the noise
 
-> Type /work to see projects
-> Or just chat directly - I'm listening
+> Connection established
+> Ready for transmission
 
 > EOF
 `,
@@ -128,7 +129,7 @@ export function slashCommands(command: string, args: string[]): string | { conte
 ════════════════════════════════════════════
 
 GORKA MOLERO
-Full-Stack Engineer, Consultant & AI Enthusiast
+Engineer, Builder, Reality Hacker
 Madrid / Lisbon / Remote
 
 CONTACT
