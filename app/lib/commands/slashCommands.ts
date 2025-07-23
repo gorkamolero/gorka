@@ -7,38 +7,19 @@ const commands: Record<string, CommandHandler> = {
 
   '/about': () => ({
     content: `
-╔═══════════════════════════════════════════╗
-║            WHO IS GORKA?                  ║
-╚═══════════════════════════════════════════╝
+> gorka molero
 
-> Accessing user profile...
-> Decrypting identity matrix...
+i build things
+sometimes they're useful
 
-[STATUS: ENGINEER/BUILDER/SEEKER]
-[LOCATION: MADRID/LISBON/THE_CLOUD]
+i get obsessed
+disappear into projects for days
+emerge with something
+sometimes with nothing
 
-CURRENT_MISSIONS:
-  • Frontend Engineer @ Roadie
-  • Building weird things that shouldn't exist
-  • QTZL netlabel - Latin electronic frequencies
-  • Training body & mind (MMA/Tantra)
-
-CAPABILITIES:
-  • Code architect
-  • Music producer  
-  • AI whisperer
-  • Reality hacker
-
-INTERESTS:
-  • Ancient wisdom meets new tech
-  • Music/Chess/MMA/Philosophy
-  • Breaking things to understand them
-  • Finding signal in the noise
-
-> Connection established
-> Ready for transmission
-
-> EOF
+then i switch contexts
+explore something else
+the cycle continues
 `,
     typewriter: true
   }),
