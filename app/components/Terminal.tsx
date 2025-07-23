@@ -24,6 +24,7 @@ import { ALL_COMMANDS } from '../lib/commands/availableCommands';
 import { MUSIC_TRACKS } from '../lib/constants/music';
 import { PROJECTS } from './WorkBrowser';
 import { formatThemeBrowser, THEME_LIST } from './ThemeBrowser';
+import { conversationStorage } from '../lib/storage/conversationStorage';
 
 export default function Terminal() {
   const [input, setInput] = useState('');
@@ -42,18 +43,35 @@ export default function Terminal() {
   const [themeBrowserActive, setThemeBrowserActive] = useState(false);
   const [selectedTheme, setSelectedTheme] = useState(0);
   const [showThemeSpinner, setShowThemeSpinner] = useState(false);
+  const [showResetConfirmation, setShowResetConfirmation] = useState(false);
+  const [showHistoryPrompt, setShowHistoryPrompt] = useState(false);
+  const [savedHistory, setSavedHistory] = useState<Array<{ type: 'input' | 'output'; content: string; typewriter?: boolean }> | null>(null);
   const terminalRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   
   const userCity = useGeolocation();
-  const { history, setHistory, isBooting, showCursor } = useBootSequence(userCity);
+  
+  const handleBootComplete = async (hasHistory: boolean) => {
+    if (hasHistory) {
+      setShowHistoryPrompt(true);
+      try {
+        const savedConversation = await conversationStorage.loadConversation();
+        setSavedHistory(savedConversation);
+      } catch (error) {
+        console.error('Failed to load conversation history:', error);
+      }
+    }
+  };
+  
+  const { history, setHistory, isBooting, showCursor } = useBootSequence(userCity, handleBootComplete);
   const { addCommand, navigateHistory } = useCommandHistory();
   const { theme, setTheme } = useTheme();
   
   const closeAllBrowsers = () => {
     setHelpBrowserActive(false);
-    setWorkBrowserActive(false);
-    setWorkBrowserVisible(false);
+    // Don't close work browser - it should persist
+    // setWorkBrowserActive(false);
+    // setWorkBrowserVisible(false);
     setMusicPlayerActive(false);
     setResumeBrowserActive(false);
     setVimModeActive(false);
@@ -94,11 +112,62 @@ export default function Terminal() {
     }
   });
 
+  // This effect was removed - history loading is now handled through boot sequence
+
+  // Save conversation history when it changes
   useEffect(() => {
+    const saveHistory = async () => {
+      if (history.length > 0 && !isBooting) {
+        try {
+          await conversationStorage.saveConversation(history);
+        } catch (error) {
+          console.error('Failed to save conversation history:', error);
+        }
+      }
+    };
+
+    // Debounce saves to avoid excessive IndexedDB operations
+    const timeoutId = setTimeout(saveHistory, 1000);
+    return () => clearTimeout(timeoutId);
+  }, [history, isBooting]);
+
+  // Auto-scroll to bottom
+  const scrollToBottom = () => {
     if (terminalRef.current) {
-      terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
+      const element = terminalRef.current;
+      element.scrollTop = element.scrollHeight;
     }
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+    // Also scroll after delays to catch typewriter and other async renders
+    const timeouts = [
+      setTimeout(scrollToBottom, 50),
+      setTimeout(scrollToBottom, 100),
+      setTimeout(scrollToBottom, 200),
+      setTimeout(scrollToBottom, 500)
+    ];
+    
+    return () => timeouts.forEach(clearTimeout);
   }, [history]);
+  
+  // Also scroll on any DOM mutations (for typewriter effect)
+  useEffect(() => {
+    if (!terminalRef.current) return;
+    
+    const observer = new MutationObserver(() => {
+      scrollToBottom();
+    });
+    
+    observer.observe(terminalRef.current, {
+      childList: true,
+      subtree: true,
+      characterData: true
+    });
+    
+    return () => observer.disconnect();
+  }, []);
 
 
   useEffect(() => {
@@ -166,6 +235,9 @@ export default function Terminal() {
           content: `> Invalid theme: ${themeName}\n> Use /themes to see available themes` 
         }]);
       }
+    } else if (output === 'RESET_CONVERSATION') {
+      setShowResetConfirmation(true);
+      setHistory(prev => [...prev, { type: 'output', content: '> Are you sure you want to clear all conversation history? (y/n)' }]);
     } else if (output && typeof output === 'object' && 'typewriter' in output) {
       setHistory(prev => [...prev, { type: 'output', content: output.content, typewriter: true }]);
     } else if (output) {
@@ -285,33 +357,43 @@ export default function Terminal() {
     }
     
     if (workBrowserActive && !workBrowserVisible) {
-      if (handleBrowserNavigation({
-        e,
-        selected: selectedProject,
-        setSelected: setSelectedProject,
-        setActive: (active) => {
-          setWorkBrowserActive(active);
-          setWorkBrowserVisible(active);
-        },
-        setHistory,
-        formatter: (sel) => formatWorkBrowser(sel, false),
-        maxItems: PROJECTS.length,
-        onEnter: () => {
-          // Show project details in terminal
-          replaceLastHistory(formatWorkBrowser(selectedProject, true));
-          setWorkBrowserVisible(true);
-          // Keep workBrowserActive true so WorkBrowser can handle keyboard events
-        },
-        onNumberKey: (index) => {
+      // Custom navigation for work browser that doesn't close on escape
+      if (e.key === 'ArrowUp' || e.key === 'k') {
+        e.preventDefault();
+        const newSelection = Math.max(0, selectedProject - 1);
+        setSelectedProject(newSelection);
+        replaceLastHistory(formatWorkBrowser(newSelection, false));
+        return;
+      }
+      
+      if (e.key === 'ArrowDown' || e.key === 'j') {
+        e.preventDefault();
+        const newSelection = Math.min(PROJECTS.length - 1, selectedProject + 1);
+        setSelectedProject(newSelection);
+        replaceLastHistory(formatWorkBrowser(newSelection, false));
+        return;
+      }
+      
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        // Show project details in terminal
+        replaceLastHistory(formatWorkBrowser(selectedProject, true));
+        setWorkBrowserVisible(true);
+        return;
+      }
+      
+      if (e.key >= '1' && e.key <= '9') {
+        const index = parseInt(e.key) - 1;
+        if (index < PROJECTS.length) {
           setSelectedProject(index);
           // Show project details in terminal
           replaceLastHistory(formatWorkBrowser(index, true));
           setWorkBrowserVisible(true);
-          // Keep workBrowserActive true so WorkBrowser can handle keyboard events
+          return;
         }
-      })) {
-        return;
       }
+      
+      // Note: No escape/q handling - work browser stays persistent
     }
     
     if (musicPlayerActive) {
@@ -350,6 +432,49 @@ export default function Terminal() {
         const trimmedInput = input.trim();
         
         if (!hasInteracted) setHasInteracted(true);
+
+        // Handle history prompt
+        if (showHistoryPrompt) {
+          setHistory(prev => [...prev, { type: 'input', content: `> ${trimmedInput}` }]);
+          
+          if (trimmedInput === '1') {
+            // Restore previous session
+            if (savedHistory && savedHistory.length > 0) {
+              setHistory(savedHistory);
+              setHistory(prev => [...prev, { type: 'output', content: '> Previous session restored.' }]);
+            }
+          } else if (trimmedInput === '2') {
+            // Start new session
+            setHistory(prev => [...prev, { type: 'output', content: '> Starting new session.' }]);
+          } else {
+            setHistory(prev => [...prev, { type: 'output', content: '> Invalid option. Please choose 1 or 2.' }]);
+            setInput('');
+            return;
+          }
+          
+          setShowHistoryPrompt(false);
+          setSavedHistory(null);
+          setInput('');
+          return;
+        }
+
+        // Handle reset confirmation
+        if (showResetConfirmation) {
+          setHistory(prev => [...prev, { type: 'input', content: `> ${trimmedInput}` }]);
+          
+          if (trimmedInput.toLowerCase() === 'y' || trimmedInput.toLowerCase() === 'yes') {
+            // Clear conversation history
+            setHistory([]);
+            conversationStorage.clearConversation().catch(console.error);
+            setHistory(prev => [...prev, { type: 'output', content: '> Conversation history cleared.' }]);
+          } else {
+            setHistory(prev => [...prev, { type: 'output', content: '> Reset cancelled.' }]);
+          }
+          
+          setShowResetConfirmation(false);
+          setInput('');
+          return;
+        }
 
         setHistory(prev => [...prev, { type: 'input', content: `> ${trimmedInput}` }]);
         addCommand(trimmedInput);
@@ -451,6 +576,9 @@ export default function Terminal() {
               content: `> Invalid theme: ${themeName}\n> Use /themes to see available themes` 
             }]);
           }
+        } else if (output === 'RESET_CONVERSATION') {
+          setShowResetConfirmation(true);
+          setHistory(prev => [...prev, { type: 'output', content: '> Are you sure you want to clear all conversation history? (y/n)' }]);
         } else if (output && typeof output === 'object' && 'typewriter' in output) {
           setHistory(prev => [...prev, { type: 'output', content: output.content, typewriter: true }]);
         } else if (output) {

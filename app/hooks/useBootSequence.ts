@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { conversationStorage } from '../lib/storage/conversationStorage';
 
 interface HistoryEntry {
   type: 'input' | 'output';
@@ -6,7 +7,7 @@ interface HistoryEntry {
   isTyping?: boolean;
 }
 
-export function useBootSequence(userCity: string) {
+export function useBootSequence(userCity: string, onBootComplete?: (hasHistory: boolean) => void) {
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [isBooting, setIsBooting] = useState(true);
   const [showCursor, setShowCursor] = useState(true);
@@ -59,15 +60,27 @@ export function useBootSequence(userCity: string) {
         await new Promise(resolve => setTimeout(resolve, system.duration));
       }
       
+      // Check for existing conversation history
+      let hasHistory = false;
+      try {
+        hasHistory = await conversationStorage.hasConversation();
+      } catch (error) {
+        console.error('Failed to check conversation history:', error);
+      }
+      
       // Hide cursor and start messages
       setShowCursor(false);
       setHistory([]);
+      
+      const finalMessage = hasHistory 
+        ? '> 1. restore previous session\n> 2. start new session'
+        : '> speak';
       
       const messages = [
         '> connection established',
         '> you\'ve found the terminal',
         `> another visitor from ${userCity}`,
-        '> speak'
+        finalMessage
       ];
 
       setHistory(messages.map(() => ({ type: 'output', content: '', isTyping: false })));
@@ -79,10 +92,15 @@ export function useBootSequence(userCity: string) {
 
       setHistory(prev => [...prev, { type: 'output', content: '' }]);
       setIsBooting(false);
+      
+      // Notify parent component about boot completion
+      if (onBootComplete) {
+        onBootComplete(hasHistory);
+      }
     };
 
     bootSequence();
-  }, [userCity]);
+  }, [userCity, onBootComplete]);
 
   return { history, setHistory, isBooting, showCursor };
 }

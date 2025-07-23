@@ -10,7 +10,8 @@ export const SLASH_COMMANDS = [
 ] as const;
 
 export const TERMINAL_COMMANDS = [
-  'clear'
+  'clear',
+  'reset'
 ] as const;
 
 export const ALL_COMMANDS = [...SLASH_COMMANDS, ...TERMINAL_COMMANDS];

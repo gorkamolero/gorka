@@ -44,6 +44,9 @@ export function systemCommands(command: string, args: string[]): string | null {
       
     case 'nano':
       return 'No.';
+    
+    case 'reset':
+      return 'RESET_CONVERSATION';
       
     default:
       return null;

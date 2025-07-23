@@ -1,6 +1,6 @@
 'use client';
 
-import { forwardRef, KeyboardEvent } from 'react';
+import { forwardRef, KeyboardEvent, useState, useEffect } from 'react';
 
 interface TerminalInputProps {
   value: string;
@@ -9,6 +9,25 @@ interface TerminalInputProps {
   showPlaceholder?: boolean;
   disabled?: boolean;
 }
+
+const CudaSpinner = () => {
+  const [dots, setDots] = useState(['●', '∙', '∙']);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setDots(prevDots => {
+        const activeIndex = prevDots.findIndex(dot => dot === '●');
+        const newDots = ['∙', '∙', '∙'];
+        newDots[(activeIndex + 1) % 3] = '●';
+        return newDots;
+      });
+    }, 300);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  return <span>[{dots.join('')}]</span>;
+};
 
 const TerminalInput = forwardRef<HTMLInputElement, TerminalInputProps>(
   ({ value, onChange, onKeyDown, showPlaceholder = false, disabled = false }, ref) => {
@@ -33,10 +52,7 @@ const TerminalInput = forwardRef<HTMLInputElement, TerminalInputProps>(
           />
           <span className="absolute top-0 pointer-events-none" style={{ left: `${value.length}ch`, color: 'var(--color-primary)' }}>
             {disabled ? (
-              <span className="inline-block">
-                <span className="inline-block mr-1">...</span>
-                <span className="inline-block animate-pulse">thinking</span>
-              </span>
+              <CudaSpinner />
             ) : (
               <span className="inline-block w-2 h-5 animate-pulse" style={{ backgroundColor: 'var(--color-cursor)' }}></span>
             )}
