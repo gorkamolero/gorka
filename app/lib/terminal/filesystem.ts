@@ -1,4 +1,3 @@
-// Simulated filesystem for terminal
 export interface FileNode {
   name: string;
   type: 'file' | 'directory';
@@ -107,7 +106,6 @@ export class FileSystem {
     }
 
     if (path.startsWith('/')) {
-      // Absolute path
       const segments = path.split('/').filter(s => s);
       const testPath = [];
       let current = this.root;
@@ -127,7 +125,6 @@ export class FileSystem {
       this.currentPath = testPath;
       return this.getCurrentPath();
     } else {
-      // Relative path
       const current = this.getCurrentDir();
       if (!current || !current.children?.has(path)) {
         return `cd: ${path}: No such file or directory`;
@@ -176,5 +173,4 @@ export class FileSystem {
   }
 }
 
-// Global filesystem instance
 export const fs = new FileSystem();

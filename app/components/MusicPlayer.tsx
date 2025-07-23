@@ -13,7 +13,7 @@ interface MusicPlayerProps {
 
 export default function MusicPlayer({ isActive, initialTrack = 0, onClose }: MusicPlayerProps) {
   const [currentTrack, setCurrentTrack] = useState(initialTrack);
-  const [selectedTrack, setSelectedTrack] = useState(initialTrack); // For navigation
+  const [selectedTrack, setSelectedTrack] = useState(initialTrack);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
@@ -23,13 +23,11 @@ export default function MusicPlayer({ isActive, initialTrack = 0, onClose }: Mus
   const trackRefs = useRef<(HTMLDivElement | null)[]>([]);
   const playerRef = useRef<HTMLDivElement | null>(null);
 
-  // Update current track when initialTrack changes
   useEffect(() => {
     setCurrentTrack(initialTrack);
     setSelectedTrack(initialTrack);
   }, [initialTrack]);
 
-  // Scroll selected track into view
   useEffect(() => {
     if (trackRefs.current[selectedTrack]) {
       trackRefs.current[selectedTrack]?.scrollIntoView({ 
@@ -39,7 +37,6 @@ export default function MusicPlayer({ isActive, initialTrack = 0, onClose }: Mus
     }
   }, [selectedTrack]);
 
-  // Extract video ID from YouTube URL
   const getVideoId = (url: string) => {
     const match = url.match(/[?&]v=([^&]+)/);
     return match ? match[1] : '';
@@ -66,7 +63,6 @@ export default function MusicPlayer({ isActive, initialTrack = 0, onClose }: Mus
   };
 
   const onEnd: YouTubeProps['onEnd'] = () => {
-    // Play next track
     const nextTrack = (currentTrack + 1) % MUSIC_TRACKS.length;
     setCurrentTrack(nextTrack);
   };
@@ -99,7 +95,6 @@ export default function MusicPlayer({ isActive, initialTrack = 0, onClose }: Mus
     }
   }, [isActive, isMinimized]);
 
-  // Keyboard navigation - only when focused
   useEffect(() => {
     if (!isActive || isMinimized || !hasFocus) return;
 
@@ -193,7 +188,6 @@ export default function MusicPlayer({ isActive, initialTrack = 0, onClose }: Mus
         <div className={`bg-black border-2 ${hasFocus ? 'border-yellow-300' : 'border-green-400'} rounded-lg overflow-hidden shadow-2xl`} 
              style={{ boxShadow: hasFocus ? '0 0 20px rgba(255, 255, 0, 0.5)' : '0 0 20px rgba(0, 255, 65, 0.5)' }}>
         
-        {/* Header */}
         <div className="flex items-center justify-between p-2 border-b border-green-400 bg-black">
           <span className="text-green-400 text-xs font-mono">♪ PLAYER</span>
           <div className="flex gap-2">
@@ -214,7 +208,6 @@ export default function MusicPlayer({ isActive, initialTrack = 0, onClose }: Mus
 
         {!isMinimized && (
           <>
-            {/* Hidden YouTube Player */}
             <div className="hidden">
               <YouTube
                 key={currentTrack} // Force remount when track changes
@@ -226,7 +219,6 @@ export default function MusicPlayer({ isActive, initialTrack = 0, onClose }: Mus
               />
             </div>
 
-            {/* Now Playing */}
             <div className="bg-black p-3 border-b border-green-400">
               <div className="text-green-400 text-xs font-mono">NOW PLAYING:</div>
               <div className="text-yellow-300 text-sm font-mono mt-1">

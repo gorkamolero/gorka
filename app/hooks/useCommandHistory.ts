@@ -4,7 +4,6 @@ export function useCommandHistory() {
   const [commandHistory, setCommandHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
 
-  // Load from localStorage on mount
   useEffect(() => {
     const savedHistory = localStorage.getItem('commandHistory');
     if (savedHistory) {
@@ -12,7 +11,6 @@ export function useCommandHistory() {
     }
   }, []);
 
-  // Save to localStorage on change
   useEffect(() => {
     if (commandHistory.length > 0) {
       localStorage.setItem('commandHistory', JSON.stringify(commandHistory.slice(-50)));
