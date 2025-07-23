@@ -7,7 +7,7 @@ export function formatThemeBrowser(selected: number): string {
   output += ' THEMES\n';
   output += '════════════════════════════════════════════\n\n';
   
-  entries.forEach(([key, theme], index) => {
+  entries.forEach(([, theme], index) => {
     const isSelected = index === selected;
     const selector = isSelected ? '>' : ' ';
     const number = index + 1;

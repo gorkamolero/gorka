@@ -1,5 +1,4 @@
 
-import { getThemeDisplay } from '../themes';
 
 type CommandOutput = string | { content: string; typewriter: boolean };
 type CommandHandler = (args: string[]) => CommandOutput;

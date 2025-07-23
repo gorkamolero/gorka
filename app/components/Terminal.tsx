@@ -68,9 +68,8 @@ export default function Terminal() {
   
   const closeAllBrowsers = () => {
     setHelpBrowserActive(false);
-    // Don't close work browser - it should persist
-    // setWorkBrowserActive(false);
-    // setWorkBrowserVisible(false);
+    setWorkBrowserActive(false);
+    setWorkBrowserVisible(false);
     setMusicPlayerActive(false);
     setResumeBrowserActive(false);
     setVimModeActive(false);
@@ -226,7 +225,7 @@ export default function Terminal() {
         setTheme(themeName);
         setHistory(prev => [...prev, { 
           type: 'output', 
-          content: `> Theme changed to ${THEMES[themeName].name}\n> ${THEMES[themeName].description}` 
+          content: `> Theme changed to ${THEMES[themeName].name}` 
         }]);
       } else {
         setHistory(prev => [...prev, { 
@@ -392,7 +391,14 @@ export default function Terminal() {
         }
       }
       
-      // Note: No escape/q handling - work browser stays persistent
+      // q exits the work browser interface but keeps it visible
+      if (e.key === 'q' || e.key === 'Escape') {
+        e.preventDefault();
+        setWorkBrowserActive(false);
+        setWorkBrowserVisible(false);
+        // Don't replace history - work browser stays visible in terminal
+        return;
+      }
     }
     
     if (musicPlayerActive) {
@@ -567,7 +573,7 @@ export default function Terminal() {
             setTheme(themeName);
             setHistory(prev => [...prev, { 
               type: 'output', 
-              content: `> Theme changed to ${THEMES[themeName].name}\n> ${THEMES[themeName].description}` 
+              content: `> Theme changed to ${THEMES[themeName].name}` 
             }]);
           } else {
             setHistory(prev => [...prev, { 

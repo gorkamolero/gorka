@@ -4,7 +4,7 @@ import { conversationStorage } from '../lib/storage/conversationStorage';
 interface HistoryEntry {
   type: 'input' | 'output';
   content: string;
-  isTyping?: boolean;
+  typewriter?: boolean;
 }
 
 export function useBootSequence(userCity: string, onBootComplete?: (hasHistory: boolean) => void) {
@@ -18,7 +18,7 @@ export function useBootSequence(userCity: string, onBootComplete?: (hasHistory: 
     const typeMessage = async (message: string, index: number) => {
       setHistory(prev => {
         const newHistory = [...prev];
-        newHistory[index] = { type: 'output', content: '', isTyping: true };
+        newHistory[index] = { type: 'output', content: '', typewriter: true };
         return newHistory;
       });
 
@@ -26,21 +26,21 @@ export function useBootSequence(userCity: string, onBootComplete?: (hasHistory: 
         await new Promise(resolve => setTimeout(resolve, 25));
         setHistory(prev => {
           const newHistory = [...prev];
-          newHistory[index] = { type: 'output', content: message.substring(0, i), isTyping: true };
+          newHistory[index] = { type: 'output', content: message.substring(0, i), typewriter: true };
           return newHistory;
         });
       }
 
       setHistory(prev => {
         const newHistory = [...prev];
-        newHistory[index] = { type: 'output', content: message, isTyping: false };
+        newHistory[index] = { type: 'output', content: message, typewriter: false };
         return newHistory;
       });
     };
 
     const bootSequence = async () => {
       // Just show blinking cursor
-      setHistory([{ type: 'output', content: '>', isTyping: false }]);
+      setHistory([{ type: 'output', content: '>', typewriter: false }]);
       setShowCursor(true);
       
       // Simulate loading various systems (this is where real loading would happen)
@@ -83,7 +83,7 @@ export function useBootSequence(userCity: string, onBootComplete?: (hasHistory: 
         finalMessage
       ];
 
-      setHistory(messages.map(() => ({ type: 'output', content: '', isTyping: false })));
+      setHistory(messages.map(() => ({ type: 'output', content: '', typewriter: false })));
 
       for (let i = 0; i < messages.length; i++) {
         await typeMessage(messages[i], i);

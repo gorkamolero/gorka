@@ -101,7 +101,7 @@ export const THEMES: Record<Theme, ThemeConfig> = {
 };
 
 export function getThemeDisplay(): string {
-  const themes = Object.entries(THEMES).map(([key, theme]) => {
+  const themes = Object.entries(THEMES).map(([key]) => {
     return `  ${key.padEnd(10)}`;
   });
   
