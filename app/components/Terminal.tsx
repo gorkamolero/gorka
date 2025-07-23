@@ -94,7 +94,6 @@ function TerminalContent() {
 
   const { executeCommand, replaceLastHistory } = useCommandExecutor(setHistory, setTheme, sendMessage);
 
-  // Save conversation history when it changes
   useEffect(() => {
     const saveHistory = async () => {
       if (history.length > 0 && !isBooting) {
@@ -106,12 +105,10 @@ function TerminalContent() {
       }
     };
 
-    // Debounce saves to avoid excessive IndexedDB operations
     const timeoutId = setTimeout(saveHistory, 1000);
     return () => clearTimeout(timeoutId);
   }, [history, isBooting]);
 
-  // Auto-scroll to bottom
   const scrollToBottom = () => {
     if (terminalRef.current) {
       const element = terminalRef.current;
@@ -121,7 +118,6 @@ function TerminalContent() {
 
   useEffect(() => {
     scrollToBottom();
-    // Also scroll after delays to catch typewriter and other async renders
     const timeouts = [
       setTimeout(scrollToBottom, 50),
       setTimeout(scrollToBottom, 100),
@@ -132,7 +128,6 @@ function TerminalContent() {
     return () => timeouts.forEach(clearTimeout);
   }, [history]);
   
-  // Also scroll on any DOM mutations (for typewriter effect)
   useEffect(() => {
     if (!terminalRef.current) return;
     
@@ -150,7 +145,6 @@ function TerminalContent() {
   }, []);
 
 
-  // Focus input after boot completes
   useEffect(() => {
     if (!isBooting && !workBrowserActive) {
       setTimeout(() => inputRef.current?.focus(), 100);
@@ -168,13 +162,11 @@ function TerminalContent() {
 
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    // Prevent input while waiting for AI response
     if (isWaitingForResponse && e.key !== 'Escape') {
       e.preventDefault();
       return;
     }
     
-    // Use the navigation hook for all browser navigation
     if (handleNavigation(e)) {
       return;
     }
@@ -189,20 +181,16 @@ function TerminalContent() {
         
         if (!hasInteracted) setHasInteracted(true);
 
-        // Handle history prompt
         if (showHistoryPrompt) {
           setHistory(prev => [...prev, { type: 'input', content: `> ${trimmedInput}` }]);
           
           if (trimmedInput === '1') {
-            // Restore previous session
             if (savedHistory && savedHistory.length > 0) {
-              // Filter out any undefined entries before restoring
               const filteredHistory = savedHistory.filter(Boolean);
               setHistory(filteredHistory);
               setHistory(prev => [...prev, { type: 'output', content: '> Previous session restored.' }]);
             }
           } else if (trimmedInput === '2') {
-            // Start new session
             setHistory(prev => [...prev, { type: 'output', content: '> Starting new session.' }]);
           } else {
             setHistory(prev => [...prev, { type: 'output', content: '> Invalid option. Please choose 1 or 2.' }]);
@@ -216,12 +204,10 @@ function TerminalContent() {
           return;
         }
 
-        // Handle reset confirmation
         if (showResetConfirmation) {
           setHistory(prev => [...prev, { type: 'input', content: `> ${trimmedInput}` }]);
           
           if (trimmedInput.toLowerCase() === 'y' || trimmedInput.toLowerCase() === 'yes') {
-            // Clear conversation history
             setHistory([]);
             conversationStorage.clearConversation().catch(console.error);
             setHistory(prev => [...prev, { type: 'output', content: '> Conversation history cleared.' }]);
@@ -260,7 +246,6 @@ function TerminalContent() {
           ref={terminalRef}
           className="h-[calc(100vh-1rem)] sm:h-[calc(100vh-2rem)] overflow-y-auto scrollbar-hide focus-blur"
         >
-            {/* Boot sequence with blinking cursor */}
             {isBooting && showCursor && (
               <div className="flex items-center">
                 <span className="mr-2">{'>'}</span>
@@ -268,7 +253,6 @@ function TerminalContent() {
               </div>
             )}
 
-            {/* Terminal history */}
             {!showCursor && history.filter(Boolean).map((entry, index) => (
               <div 
                 key={index}
@@ -285,7 +269,6 @@ function TerminalContent() {
               </div>
             ))}
             
-            {/* Input line */}
             {!isBooting && !workBrowserActive && (
               <TerminalInput
                 ref={inputRef}
@@ -297,7 +280,6 @@ function TerminalContent() {
               />
             )}
             
-            {/* Hidden focusable element for work browser navigation */}
             {!isBooting && workBrowserActive && !workBrowserVisible && (
               <div className="flex items-center text-yellow-300">
                 <span className="mr-2">{'>'}</span>
@@ -310,7 +292,6 @@ function TerminalContent() {
                   readOnly
                   autoFocus
                   onBlur={(e) => {
-                    // Refocus if blur wasn't intentional (e.g., clicking elsewhere)
                     if (!e.relatedTarget) {
                       setTimeout(() => e.target.focus(), 0);
                     }
@@ -321,26 +302,22 @@ function TerminalContent() {
         </div>
       </div>
       
-      {/* Music Player */}
       <MusicPlayer 
         isActive={musicPlayerVisible}
         initialTrack={selectedTrack}
         onClose={() => setMusicPlayerVisible(false)}
       />
       
-      {/* Work Browser */}
       <WorkBrowser
         isActive={workBrowserVisible}
         selectedProject={selectedProject}
         onClose={() => {
           setWorkBrowserVisible(false);
-          // Go back to project list
           replaceLastHistory(formatWorkBrowser(selectedProject, false));
         }}
         setHistory={setHistory}
       />
       
-      {/* Vim Mode */}
       <VimMode
         isActive={vimModeActive}
         onClose={() => {

@@ -230,7 +230,6 @@ export default function MusicPlayer({ isActive, initialTrack = 0, onClose }: Mus
               </div>
             </div>
 
-            {/* Audio Controls */}
             <div className="bg-black p-2 border-b border-green-400 flex items-center justify-center gap-4">
               <button 
                 onClick={() => {
@@ -267,11 +266,9 @@ export default function MusicPlayer({ isActive, initialTrack = 0, onClose }: Mus
               </button>
             </div>
 
-            {/* Track List */}
             <div className="bg-black border-t border-green-400 overflow-y-auto" style={{ maxHeight: '200px' }}>
               {MUSIC_TRACKS.map((track, index) => (
                 <div key={index}>
-                  {/* Add section headers */}
                   {index === 0 && (
                     <div className="text-green-400 text-xs font-mono px-3 pt-2 pb-1 opacity-70">
                       ─── PIANO ───
@@ -303,7 +300,6 @@ export default function MusicPlayer({ isActive, initialTrack = 0, onClose }: Mus
               ))}
             </div>
 
-            {/* Controls */}
             <div className="bg-black border-t border-green-400 p-2 text-center">
               <div className="text-green-400 text-xs font-mono opacity-70">
                 {hasFocus ? (

@@ -96,7 +96,6 @@ export default function VimMode({ isActive, initialFile = '', onClose }: VimMode
             });
             setCursor(prev => ({ ...prev, col: prev.col - 1 }));
           } else if (cursor.line > 0) {
-            // Join with previous line
             const prevLineLength = content[cursor.line - 1].length;
             setContent(prev => {
               const newContent = [...prev];

@@ -52,7 +52,6 @@ export function useTerminalNavigation(
     vimModeActive
   } = useTerminalContext();
 
-  // Focus management - ensure input always has focus when available
   useEffect(() => {
     const focusInput = () => {
       if (!isBooting && !workBrowserActive && inputRef?.current) {
@@ -60,21 +59,15 @@ export function useTerminalNavigation(
       }
     };
 
-    // Focus on mount and when states change
     focusInput();
 
-    // Refocus input on any keydown when no special browser is active
     const handleGlobalKeyDown = () => {
-      // Don't interfere with music player when it has focus
       if (musicPlayerVisible) return;
       
-      // If work browser overlay is visible, let it handle keys
       if (workBrowserVisible) return;
       
-      // If vim mode is active, let it handle keys
       if (vimModeActive) return;
       
-      // Otherwise, ensure input has focus
       if (!isBooting && !workBrowserActive) {
         focusInput();
       }
@@ -85,7 +78,6 @@ export function useTerminalNavigation(
   }, [isBooting, workBrowserActive, musicPlayerVisible, workBrowserVisible, vimModeActive, inputRef]);
 
   const handleNavigation = (e: KeyboardEvent<HTMLInputElement>): boolean => {
-    // Theme browser navigation
     if (themeBrowserActive) {
       if (handleBrowserNavigation({
         e,
@@ -132,7 +124,6 @@ export function useTerminalNavigation(
       }
     }
     
-    // Resume browser navigation
     if (resumeBrowserActive) {
       if (handleBrowserNavigation({
         e,
@@ -157,7 +148,6 @@ export function useTerminalNavigation(
       }
     }
     
-    // Help browser navigation
     if (helpBrowserActive) {
       if (handleBrowserNavigation({
         e,
@@ -180,7 +170,6 @@ export function useTerminalNavigation(
       }
     }
     
-    // Work browser navigation  
     if (workBrowserActive && !workBrowserVisible) {
       if (e.key === 'ArrowUp' || e.key === 'k') {
         e.preventDefault();
@@ -223,7 +212,6 @@ export function useTerminalNavigation(
       }
     }
     
-    // Music player navigation
     if (musicPlayerActive) {
       if (handleBrowserNavigation({
         e,

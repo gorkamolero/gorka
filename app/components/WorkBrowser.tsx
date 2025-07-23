@@ -168,21 +168,17 @@ export default function WorkBrowser({ isActive, selectedProject, onClose, setHis
         openLink(`https://${project.link}`);
       } else if (e.key === '2' && project.github && project.link) {
         if (project.github === 'ask-to-get-access') {
-          // Do nothing - just a tease
           return;
         }
         openLink(`https://${project.github}`);
       } else if (e.key === '1' && project.github && !project.link) {
         if (project.github === 'ask-to-get-access') {
-          // Do nothing - just a tease
           return;
         }
         openLink(`https://${project.github}`);
       } else if (e.key === '3' && project.name === 'Codex') {
-        // Special case for Codex - third link
         openLink('https://github.com/gorkamolero/tantras');
       } else if (e.key === '2' && project.name === 'Codex' && !project.link) {
-        // Codex tantras repo when there's no live link
         openLink('https://github.com/gorkamolero/tantras');
       }
     };
@@ -199,11 +195,9 @@ export default function WorkBrowser({ isActive, selectedProject, onClose, setHis
       {project.images && project.images.length > 0 && (
         <div className="fixed top-20 right-10 z-50">
           {project.images.length > 1 ? (
-            // Scrollable container for multiple images
             <div className="w-80 max-h-[70vh] overflow-y-auto scrollbar-hide bg-black p-2">
               {project.images.map((img, index) => (
                 <div key={index} className="relative mb-4 border border-green-400/20 overflow-hidden">
-                  {/* CRT effect and vignette overlay */}
                   <div className="absolute inset-0 pointer-events-none z-10">
                     <div className="absolute inset-0 bg-gradient-radial from-transparent via-transparent to-black/50" />
                     <div className="absolute inset-0 crt-lines" />
@@ -221,9 +215,7 @@ export default function WorkBrowser({ isActive, selectedProject, onClose, setHis
               ))}
             </div>
           ) : (
-            // Single image display
             <div className="relative border border-green-400/20 overflow-hidden">
-              {/* CRT effect and vignette overlay */}
               <div className="absolute inset-0 pointer-events-none z-10">
                 <div className="absolute inset-0 bg-gradient-radial from-transparent via-transparent to-black/50" />
                 <div className="absolute inset-0 crt-lines" />
@@ -276,7 +268,6 @@ ${project.description.map(line => `  ${line}`).join('\n')}
         }
         linkNum++;
       }
-      // Special case for Codex - add tantras repo
       if (project.name === 'Codex') {
         display += `  [${linkNum}] Tantras → github.com/gorkamolero/tantras\n`;
       }

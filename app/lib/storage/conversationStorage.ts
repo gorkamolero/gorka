@@ -83,7 +83,6 @@ class ConversationStorage {
         const result = request.result as StoredConversation | undefined;
         if (result) {
           resolve(result.messages.map(({ timestamp, ...msg }) => {
-            // Ignore timestamp for now
             void timestamp;
             return msg;
           }));

@@ -39,11 +39,9 @@ export function useBootSequence(userCity: string, onBootComplete?: (hasHistory: 
     };
 
     const bootSequence = async () => {
-      // Just show blinking cursor
       setHistory([{ type: 'output', content: '>', typewriter: false }]);
       setShowCursor(true);
       
-      // Simulate loading various systems (this is where real loading would happen)
       const loadingSystems = [
         { name: 'core modules', duration: 300 },
         { name: 'command parser', duration: 200 },
@@ -52,15 +50,12 @@ export function useBootSequence(userCity: string, onBootComplete?: (hasHistory: 
         { name: 'terminal interface', duration: 200 }
       ];
 
-      // Let cursor blink for a moment
       await new Promise(resolve => setTimeout(resolve, 800));
       
-      // Load systems in background
       for (const system of loadingSystems) {
         await new Promise(resolve => setTimeout(resolve, system.duration));
       }
       
-      // Check for existing conversation history
       let savedConversation: HistoryEntry[] | null = null;
       let hasHistory = false;
       try {
@@ -70,11 +65,9 @@ export function useBootSequence(userCity: string, onBootComplete?: (hasHistory: 
         console.error('Failed to load conversation history:', error);
       }
       
-      // Hide cursor and start messages
       setShowCursor(false);
       setHistory([]);
       
-      // Different behavior based on environment
       const isProduction = process.env.NODE_ENV === 'production';
       const finalMessage = (isProduction && hasHistory) 
         ? '> 1. restore previous session\n> 2. start new session'
@@ -94,26 +87,19 @@ export function useBootSequence(userCity: string, onBootComplete?: (hasHistory: 
         await new Promise(resolve => setTimeout(resolve, 300));
       }
 
-      // Wait a moment before restoring to ensure messages are displayed
       await new Promise(resolve => setTimeout(resolve, 500));
 
-      // Auto-restore in development, or if no history exists
       if (!isProduction && hasHistory && savedConversation) {
-        // Development: automatically restore
-        // Replace the boot messages with the saved conversation
         const filteredHistory = savedConversation.filter(Boolean);
         setHistory(filteredHistory);
       } else if (!hasHistory) {
-        // No history: add empty line after boot messages
         setHistory(prev => [...prev, { type: 'output', content: '' }]);
       } else {
-        // Production with history: add empty line after boot messages, let parent handle prompt
         setHistory(prev => [...prev, { type: 'output', content: '' }]);
       }
       
       setIsBooting(false);
       
-      // Notify parent component about boot completion
       if (onBootComplete) {
         onBootComplete(isProduction && hasHistory);
       }

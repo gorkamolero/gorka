@@ -105,7 +105,6 @@ CREATIVE:
 };
 
 export function slashCommands(command: string, args: string[]): string | { content: string; typewriter: boolean } {
-  // Handle resume with format
   if (command === '/resume' && args.length > 0) {
     const format = args[0].toLowerCase();
     switch (format) {

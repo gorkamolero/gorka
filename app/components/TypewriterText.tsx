@@ -11,21 +11,18 @@ export default function TypewriterText({ text, onComplete }: TypewriterTextProps
   
   useEffect(() => {
     if (currentIndex < text.length) {
-      // Add variable delays for more authentic terminal feel
       const baseDelay = 25;
-      const variation = Math.random() * 20; // 0-20ms variation
+      const variation = Math.random() * 20;
       const currentChar = text[currentIndex];
       const isPunctuation = /[.,!?;:]/.test(currentChar);
       const isSpace = currentChar === ' ';
       const isNewline = currentChar === '\n';
       
-      // Longer delays after punctuation, shorter for spaces
       let delay = baseDelay + variation;
-      if (isPunctuation) delay += 60; // Extra pause after punctuation
-      if (isSpace) delay = 8; // Quick spaces
-      if (isNewline) delay += 80; // Pause at line breaks
+      if (isPunctuation) delay += 60;
+      if (isSpace) delay = 8;
+      if (isNewline) delay += 80;
       
-      // Occasionally type 2-3 characters at once for authenticity
       const shouldBurst = Math.random() < 0.15 && !isPunctuation && !isNewline;
       const burstLength = shouldBurst ? Math.min(2 + Math.floor(Math.random() * 2), text.length - currentIndex) : 1;
       
