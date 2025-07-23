@@ -2,7 +2,7 @@ import { slashCommands } from './slashCommands';
 import { fileSystemCommands } from './fileSystemCommands';
 import { systemCommands } from './systemCommands';
 
-export function handleCommand(input: string): string | null {
+export function handleCommand(input: string): string | { content: string; typewriter: boolean } | null {
   const trimmedInput = input.trim();
   const [command, ...args] = trimmedInput.split(' ');
   

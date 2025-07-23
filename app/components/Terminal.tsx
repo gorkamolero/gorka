@@ -139,6 +139,8 @@ export default function Terminal() {
       closeAllBrowsers();
       setVimModeActive(true);
       setHistory(prev => [...prev, { type: 'output', content: '> Entering vim...' }]);
+    } else if (output && typeof output === 'object' && 'typewriter' in output) {
+      setHistory(prev => [...prev, { type: 'output', content: output.content, typewriter: true }]);
     } else if (output) {
       setHistory(prev => [...prev, { type: 'output', content: output }]);
     } else {
@@ -360,6 +362,8 @@ export default function Terminal() {
           closeAllBrowsers();
           setVimModeActive(true);
           setHistory(prev => [...prev, { type: 'output', content: '> Entering vim...' }]);
+        } else if (output && typeof output === 'object' && 'typewriter' in output) {
+          setHistory(prev => [...prev, { type: 'output', content: output.content, typewriter: true }]);
         } else if (output) {
           setHistory(prev => [...prev, { type: 'output', content: output }]);
         } else {

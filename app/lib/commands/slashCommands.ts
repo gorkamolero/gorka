@@ -1,10 +1,12 @@
 
-type CommandHandler = (args: string[]) => string;
+type CommandOutput = string | { content: string; typewriter: boolean };
+type CommandHandler = (args: string[]) => CommandOutput;
 
 const commands: Record<string, CommandHandler> = {
   '/help': () => 'SHOW_HELP_BROWSER',
 
-  '/about': () => `
+  '/about': () => ({
+    content: `
 ╔═══════════════════════════════════════════╗
 ║        FULL-STACK ENGINEER                ║
 ╚═══════════════════════════════════════════╝
@@ -37,12 +39,15 @@ Interests beyond code:
 
 > EOF
 `,
+    typewriter: true
+  }),
 
   '/work': () => 'SHOW_WORK_BROWSER',
 
   '/music': () => 'SHOW_MUSIC_PLAYER',
 
-  '/contact': () => `
+  '/contact': () => ({
+    content: `
 ╔═══════════════════════════════════════════╗
 ║        ESTABLISH CONNECTION               ║
 ╚═══════════════════════════════════════╝
@@ -59,8 +64,11 @@ Location: Madrid / Lisbon / Remote
 > Type /work for project details
 > Or just start chatting
 `,
+    typewriter: true
+  }),
 
-  '/skills': () => `
+  '/skills': () => ({
+    content: `
 ╔═══════════════════════════════════════════╗
 ║       TECH STACK & PREFERENCES            ║
 ╚═══════════════════════════════════════════╝
@@ -93,11 +101,13 @@ CREATIVE:
 
 > Strong opinions, loosely held (but mostly strong)
 `,
+    typewriter: true
+  }),
 
   '/resume': () => 'SHOW_RESUME_BROWSER'
 };
 
-export function slashCommands(command: string, args: string[]): string {
+export function slashCommands(command: string, args: string[]): string | { content: string; typewriter: boolean } {
   // Handle resume with format
   if (command === '/resume' && args.length > 0) {
     const format = args[0].toLowerCase();
