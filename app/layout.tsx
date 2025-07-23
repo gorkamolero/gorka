@@ -10,8 +10,8 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Gorka - Terminal CV",
-  description: "AI-powered terminal interface to explore my work",
+  title: "~/gorka",
+  description: "personal terminal. type /help to start",
 };
 
 export default function RootLayout({
