@@ -1,7 +1,7 @@
 'use client';
 
 import { useChat } from '@ai-sdk/react';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect } from 'react';
 import { DefaultChatTransport } from 'ai';
 
 interface UseTerminalChatProps {
@@ -38,32 +38,6 @@ export function useTerminalChat({ onMessage, onLoading }: UseTerminalChatProps) 
     }
   }, [error, onMessage]);
 
-  // Track the last processed message to avoid duplicates
-  const lastProcessedMessageRef = useRef<string>('');
-  
-  // Watch for message updates and report them
-  useEffect(() => {
-    if (messages.length > 0) {
-      const lastMessage = messages[messages.length - 1];
-      if (lastMessage.role === 'assistant') {
-        let textContent = '';
-        
-        // Extract text from parts array
-        if (lastMessage.parts && Array.isArray(lastMessage.parts)) {
-          textContent = lastMessage.parts
-            .filter((part): part is { type: 'text'; text: string } => part.type === 'text')
-            .map(part => part.text)
-            .join('');
-        }
-        
-        // Only call onMessage if this is actually new content
-        if (textContent && textContent !== lastProcessedMessageRef.current) {
-          lastProcessedMessageRef.current = textContent;
-          onMessage(textContent, true);
-        }
-      }
-    }
-  }, [messages, onMessage]);
 
   // Initialize with conversation history
   const initializeWithHistory = useCallback((history: Array<{ type: 'input' | 'output'; content: string }>) => {
@@ -88,6 +62,7 @@ export function useTerminalChat({ onMessage, onLoading }: UseTerminalChatProps) 
   }, [setMessages]);
 
   return {
+    messages,
     sendMessage: sendChatMessage,
     initializeWithHistory,
   };

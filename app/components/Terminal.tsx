@@ -17,7 +17,6 @@ import MusicPlayer from './MusicPlayer';
 import WorkBrowser, { formatWorkBrowser } from './WorkBrowser';
 import VimMode from './VimMode';
 import { useTerminalChat } from '../hooks/useTerminalChat';
-import { conversationStorage } from '../lib/storage/conversationStorage';
 
 function TerminalContent() {  
   const {
@@ -41,99 +40,67 @@ function TerminalContent() {
   
   const userCity = useGeolocation();
   
-  const handleBootComplete = useCallback(async (hasHistory: boolean) => {
-    if (hasHistory) {
-      setShowHistoryPrompt(true);
-      try {
-        const savedConversation = await conversationStorage.loadConversation();
-        // Filter out any undefined entries
-        const filteredConversation = savedConversation?.filter(Boolean) || null;
-        setSavedHistory(filteredConversation);
-      } catch (error) {
-        console.error('Failed to load conversation history:', error);
-      }
-    }
-  }, [setShowHistoryPrompt, setSavedHistory]);
-  
-  const { history, setHistory, isBooting, showCursor } = useBootSequence(userCity, handleBootComplete);
+  const { history, setHistory, isBooting, showCursor } = useBootSequence(userCity);
   const { addCommand, navigateHistory } = useCommandHistory();
   const { setTheme } = useTheme();
   
   const { handleShortcut } = useKeyboardShortcuts({ input, setInput, setHistory, inputRef, closeAllBrowsers });
   
-  const streamingIndexRef = useRef<number | null>(null);
-  
-  const handleChatMessage = useCallback((content: string, isAI: boolean) => {
-    if (isAI) {
-      setHistory(prev => {
-        const newHistory = [...prev];
-        
-        if (streamingIndexRef.current !== null && streamingIndexRef.current < newHistory.length) {
-          newHistory[streamingIndexRef.current] = {
-            type: 'output',
-            content: `> ${content}`
-          };
-        } else {
-          newHistory.push({ type: 'output', content: `> ${content}` });
-          streamingIndexRef.current = newHistory.length - 1;
-        }
-        
-        return newHistory;
-      });
-    }
-  }, [setHistory]);
+  const streamingMessageRef = useRef<number | null>(null);
 
   const handleChatLoading = useCallback((loading: boolean) => {
     setIsWaitingForResponse(loading);
     if (!loading) {
-      streamingIndexRef.current = null;
+      // Reset streaming ref when done
+      streamingMessageRef.current = null;
       setTimeout(() => inputRef.current?.focus(), 100);
     }
   }, [setIsWaitingForResponse]);
 
-  const { sendMessage, initializeWithHistory } = useTerminalChat({
-    onMessage: handleChatMessage,
+  const { messages: aiMessages, sendMessage, initializeWithHistory } = useTerminalChat({
+    onMessage: () => {}, // Not used anymore
     onLoading: handleChatLoading
   });
   
-  // Initialize chat with conversation history only once after boot
-  const initializedRef = useRef(false);
+  // Sync AI messages to terminal history
   useEffect(() => {
-    if (!isBooting && !initializedRef.current && history.length > 0) {
-      const chatHistory = history.filter(entry => 
-        entry && entry.content && 
-        (entry.type === 'input' || 
-         (entry.type === 'output' && 
-          !entry.content.includes('restore previous session') && 
-          !entry.content.includes('start new session') &&
-          !entry.content.includes('connection established') &&
-          !entry.content.includes('you\'ve found the terminal') &&
-          !entry.content.includes('another visitor from')))
-      );
-      if (chatHistory.length > 0) {
-        initializeWithHistory(chatHistory);
-        initializedRef.current = true;
+    if (aiMessages.length > 0) {
+      const lastAiMessage = aiMessages[aiMessages.length - 1];
+      if (lastAiMessage.role === 'assistant') {
+        // Extract text content from parts
+        const content = lastAiMessage.parts
+          .filter((part): part is { type: 'text'; text: string } => part.type === 'text')
+          .map(part => part.text)
+          .join('');
+        
+        if (content) {
+          // Update or add the AI message
+          setHistory(prev => {
+            const newHistory = [...prev];
+            
+            // Check if we need to update existing message or add new one
+            if (streamingMessageRef.current !== null && streamingMessageRef.current < newHistory.length) {
+              newHistory[streamingMessageRef.current] = {
+                type: 'output',
+                content: `> ${content}`
+              };
+            } else {
+              // First time seeing this message
+              newHistory.push({ type: 'output', content: `> ${content}` });
+              streamingMessageRef.current = newHistory.length - 1;
+            }
+            
+            return newHistory;
+          });
+        }
       }
     }
-  }, [isBooting, history, initializeWithHistory]);
+  }, [aiMessages, setHistory]);
+  
   
 
   const { executeCommand, replaceLastHistory } = useCommandExecutor(setHistory, setTheme, sendMessage);
 
-  useEffect(() => {
-    const saveHistory = async () => {
-      if (history.length > 0 && !isBooting) {
-        try {
-          await conversationStorage.saveConversation(history);
-        } catch (error) {
-          console.error('Failed to save conversation history:', error);
-        }
-      }
-    };
-
-    const timeoutId = setTimeout(saveHistory, 1000);
-    return () => clearTimeout(timeoutId);
-  }, [history, isBooting]);
 
   const scrollToBottom = () => {
     if (terminalRef.current) {
@@ -235,7 +202,6 @@ function TerminalContent() {
           
           if (trimmedInput.toLowerCase() === 'y' || trimmedInput.toLowerCase() === 'yes') {
             setHistory([]);
-            conversationStorage.clearConversation().catch(console.error);
             setHistory(prev => [...prev, { type: 'output', content: '> Conversation history cleared.' }]);
           } else {
             setHistory(prev => [...prev, { type: 'output', content: '> Reset cancelled.' }]);
@@ -248,8 +214,9 @@ function TerminalContent() {
 
         setHistory(prev => [...prev, { type: 'input', content: `> ${trimmedInput}` }]);
         addCommand(trimmedInput);
-        executeCommand(trimmedInput);
         setInput('');
+        // Execute command after state update to ensure proper order
+        setTimeout(() => executeCommand(trimmedInput), 0);
       }
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
