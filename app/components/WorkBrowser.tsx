@@ -80,7 +80,7 @@ const PROJECTS: Project[] = [
   },
   {
     name: '777 Leftover Squawk',
-    brief: '24-hour radio created as bhakti to Matangi',
+    brief: '24-hour radio with story burning, created as bhakti to Matangi',
     description: [
       'Music interrupted by dark stories',
       'Submit stories to burn in Matangi\'s pile',
