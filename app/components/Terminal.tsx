@@ -12,6 +12,7 @@ import TerminalInput from './TerminalInput';
 import MusicPlayer from './MusicPlayer';
 import WorkBrowser, { formatWorkBrowser } from './WorkBrowser';
 import { formatHelpBrowser } from './HelpBrowser';
+import VimMode from './VimMode';
 import { useTerminalAI } from '../hooks/useTerminalAI';
 import { formatMusicPlayer } from '../lib/terminal/formatters';
 import { handleBrowserNavigation } from '../lib/terminal/browserHandlers';
@@ -31,6 +32,7 @@ export default function Terminal() {
   const [showProjectDetails, setShowProjectDetails] = useState(false);
   const [helpBrowserActive, setHelpBrowserActive] = useState(false);
   const [selectedCommand, setSelectedCommand] = useState(0);
+  const [vimModeActive, setVimModeActive] = useState(false);
   const terminalRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   
@@ -44,6 +46,7 @@ export default function Terminal() {
     setWorkBrowserVisible(false);
     setShowProjectDetails(false);
     setMusicPlayerActive(false);
+    setVimModeActive(false);
   };
   
   const { handleShortcut } = useKeyboardShortcuts({ input, setInput, setHistory, inputRef, closeAllBrowsers });
@@ -118,6 +121,10 @@ export default function Terminal() {
       const helpDisplay = formatHelpBrowser(0);
       replaceLastHistory(`> ${command}`);
       setHistory(prev => [...prev, { type: 'output', content: helpDisplay }]);
+    } else if (output === 'SHOW_VIM_MODE') {
+      closeAllBrowsers();
+      setVimModeActive(true);
+      setHistory(prev => [...prev, { type: 'output', content: '> Entering vim...' }]);
     } else if (output) {
       setHistory(prev => [...prev, { type: 'output', content: output }]);
     } else {
@@ -288,6 +295,10 @@ export default function Terminal() {
             newHistory.push({ type: 'output', content: helpDisplay });
             return newHistory;
           });
+        } else if (output === 'SHOW_VIM_MODE') {
+          closeAllBrowsers();
+          setVimModeActive(true);
+          setHistory(prev => [...prev, { type: 'output', content: '> Entering vim...' }]);
         } else if (output) {
           setHistory(prev => [...prev, { type: 'output', content: output }]);
         } else {
@@ -356,6 +367,16 @@ export default function Terminal() {
         onClose={() => {
           setWorkBrowserVisible(false);
           setWorkBrowserActive(false);
+        }}
+      />
+      
+      {/* Vim Mode */}
+      <VimMode
+        isActive={vimModeActive}
+        onClose={() => {
+          setVimModeActive(false);
+          setHistory(prev => [...prev, { type: 'output', content: '> Exited vim.' }]);
+          setTimeout(() => inputRef.current?.focus(), 100);
         }}
       />
     </CRTEffect>

@@ -35,6 +35,16 @@ export function systemCommands(command: string, args: string[]): string | null {
     case 'hostname':
       return 'terminal.gorka.dev';
       
+    case 'vim':
+    case 'vi':
+      return 'SHOW_VIM_MODE';
+      
+    case 'emacs':
+      return 'Real programmers use vim.';
+      
+    case 'nano':
+      return 'This is a terminal for hackers, not journalists.';
+      
     default:
       return null;
   }

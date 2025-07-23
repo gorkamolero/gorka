@@ -14,6 +14,10 @@ export const TERMINAL_COMMANDS = [
   'cls',
   'ls',
   'pwd',
+  'cd',
+  'cat',
+  'vim',
+  'vi',
   'whoami',
   'echo',
   'date',
@@ -21,7 +25,10 @@ export const TERMINAL_COMMANDS = [
   'uptime',
   'history',
   'hostname',
-  'which'
+  'which',
+  'mkdir',
+  'rm',
+  'touch'
 ] as const;
 
 export const ALL_COMMANDS = [...SLASH_COMMANDS, ...TERMINAL_COMMANDS];

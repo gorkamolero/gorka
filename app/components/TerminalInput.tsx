@@ -13,7 +13,7 @@ const TerminalInput = forwardRef<HTMLInputElement, TerminalInputProps>(
   ({ value, onChange, onKeyDown, showPlaceholder = false }, ref) => {
     return (
       <div className="flex items-center">
-        <span className="mr-2">{'>'}</span>
+        <span className="mr-2 text-yellow-300">{'>'}</span>
         <div className="flex-1 relative">
           <input
             ref={ref}
