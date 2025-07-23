@@ -12,4 +12,6 @@ export const createAIProvider = () => {
   });
 };
 
-export const AI_MODEL = process.env.NODE_ENV === 'production' ? 'moonshotai/kimi-k2:free' : 'moonshotai/kimi-k2';
+export const KIMI_FREE_MODEL = 'moonshotai/kimi-k2:free';
+export const KIMI_REGULAR_MODEL = 'moonshotai/kimi-k2';
+export const AI_MODEL = process.env.NODE_ENV === 'production' ? KIMI_FREE_MODEL : KIMI_REGULAR_MODEL;

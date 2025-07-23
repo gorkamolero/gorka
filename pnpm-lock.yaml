@@ -20,6 +20,9 @@ importers:
       ai:
         specifier: 5.0.0-beta.25
         version: 5.0.0-beta.25(zod@4.0.5)
+      ai-fallback:
+        specifier: '1'
+        version: 1.0.1(zod@4.0.5)
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
@@ -77,6 +80,12 @@ packages:
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4
+
+  '@ai-sdk/provider-utils@3.0.0-beta.1':
+    resolution: {integrity: sha512-CpxjXZ3IOKSlZbb9lSplZjeOfKdn5fXNpBnKsI9uix54PntpN3dB7l0aACDunzx2fd9NiPzbovj6Zs+VtGIspg==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      zod: ^3.25.49
 
   '@ai-sdk/provider-utils@3.0.0-beta.5':
     resolution: {integrity: sha512-4Dv/wiGZrvO6fI7P0yMLa4XZru0XW8LPibTObbkHBdweLUVGIze7aCfxxQeY44Uqcbl/h6/yBTkx2XmPtwf/Ow==}
@@ -689,6 +698,9 @@ packages:
     resolution: {integrity: sha512-NZyJarBfL7nWwIq+FDL6Zp/yHEhePMNnnJ0y3qfieCrmNvYct8uvtiV41UvlSe6apAfk0fY1FbWx+NwfmpvtTg==}
     engines: {node: '>=0.4.0'}
     hasBin: true
+
+  ai-fallback@1.0.1:
+    resolution: {integrity: sha512-7Dnn+AR1p7g1GFokzL0NfCOXgtaoyshYSFHC3lbZZKPvRiD9FiZlZauOGJtC6zHOQwh8Yo+KmhTaTRoBXhZMEA==}
 
   ai@5.0.0-beta.25:
     resolution: {integrity: sha512-pbfFqtQvz7hiDw6TwUH75CK9FgrZFBsxqbW4yW0aqluHw3nRbhf0w1u2AMiYgvWMy8Xf8TkBbMtY4vyMc4neeA==}
@@ -1963,6 +1975,14 @@ snapshots:
       '@ai-sdk/provider-utils': 3.0.0-beta.5(zod@4.0.5)
       zod: 4.0.5
 
+  '@ai-sdk/provider-utils@3.0.0-beta.1(zod@4.0.5)':
+    dependencies:
+      '@ai-sdk/provider': 2.0.0-beta.1
+      '@standard-schema/spec': 1.0.0
+      eventsource-parser: 3.0.3
+      zod: 4.0.5
+      zod-to-json-schema: 3.24.6(zod@4.0.5)
+
   '@ai-sdk/provider-utils@3.0.0-beta.5(zod@4.0.5)':
     dependencies:
       '@ai-sdk/provider': 2.0.0-beta.1
@@ -2497,6 +2517,13 @@ snapshots:
       acorn: 8.15.0
 
   acorn@8.15.0: {}
+
+  ai-fallback@1.0.1(zod@4.0.5):
+    dependencies:
+      '@ai-sdk/provider': 2.0.0-beta.1
+      '@ai-sdk/provider-utils': 3.0.0-beta.1(zod@4.0.5)
+    transitivePeerDependencies:
+      - zod
 
   ai@5.0.0-beta.25(zod@4.0.5):
     dependencies:

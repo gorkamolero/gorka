@@ -1,5 +1,6 @@
 import { streamText, convertToModelMessages, UIMessage } from 'ai';
-import { createAIProvider, AI_MODEL } from '@/app/lib/ai/chat';
+import { createFallback } from 'ai-fallback';
+import { createAIProvider, AI_MODEL, KIMI_FREE_MODEL, KIMI_REGULAR_MODEL } from '@/app/lib/ai/chat';
 import { loadPrompt } from '@/app/lib/ai/prompts/loader';
 
 export async function POST(req: Request) {
@@ -9,8 +10,21 @@ export async function POST(req: Request) {
     const openrouter = createAIProvider();
     const systemPrompt = await loadPrompt('digital-twin');
     
+    // Create fallback model that switches to regular Kimi on rate limit
+    const model = AI_MODEL === KIMI_FREE_MODEL 
+      ? createFallback({
+          models: [openrouter(KIMI_FREE_MODEL), openrouter(KIMI_REGULAR_MODEL)],
+          retryAfterOutput: true, // Retry even if partial output was streamed
+          onError: (error: unknown) => {
+            if (error && typeof error === 'object' && 'statusCode' in error && error.statusCode === 429) {
+              console.log('Rate limit hit on free model, switching to regular Kimi model...');
+            }
+          },
+        })
+      : openrouter(AI_MODEL);
+    
     const result = streamText({
-      model: openrouter(AI_MODEL),
+      model,
       system: systemPrompt,
       messages: convertToModelMessages(messages),
     });
