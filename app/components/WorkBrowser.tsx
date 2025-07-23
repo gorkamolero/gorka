@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import Image from 'next/image';
 
 interface Project {
@@ -97,11 +97,17 @@ const PROJECTS: Project[] = [
   }
 ];
 
+interface HistoryEntry {
+  type: 'input' | 'output';
+  content: string;
+  typewriter?: boolean;
+}
+
 interface WorkBrowserProps {
   isActive: boolean;
   selectedProject: number;
   onClose: () => void;
-  setHistory?: any;
+  setHistory?: (update: (prev: HistoryEntry[]) => HistoryEntry[]) => void;
 }
 
 export default function WorkBrowser({ isActive, selectedProject, onClose, setHistory }: WorkBrowserProps) {
@@ -117,7 +123,7 @@ export default function WorkBrowser({ isActive, selectedProject, onClose, setHis
         onClose();
         
         // Add spinner to history
-        setHistory((prev: any) => [...prev, { 
+        setHistory((prev: HistoryEntry[]) => [...prev, { 
           type: 'output', 
           content: `> [●∙∙]` 
         }]);
@@ -129,7 +135,7 @@ export default function WorkBrowser({ isActive, selectedProject, onClose, setHis
           dots = ['∙', '∙', '∙'];
           dots[(activeIndex + 1) % 3] = '●';
           
-          setHistory((prev: any) => {
+          setHistory((prev: HistoryEntry[]) => {
             const newHistory = [...prev];
             if (newHistory.length > 0 && newHistory[newHistory.length - 1].content.includes('[')) {
               newHistory[newHistory.length - 1] = {
@@ -147,7 +153,7 @@ export default function WorkBrowser({ isActive, selectedProject, onClose, setHis
           window.open(url, '_blank');
           
           // Remove spinner line
-          setHistory((prev: any) => {
+          setHistory((prev: HistoryEntry[]) => {
             const newHistory = [...prev];
             if (newHistory.length > 0 && newHistory[newHistory.length - 1].content.includes('[')) {
               newHistory.pop();
