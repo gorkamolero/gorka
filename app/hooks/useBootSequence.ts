@@ -60,27 +60,25 @@ export function useBootSequence(userCity: string, onBootComplete?: (hasHistory: 
         await new Promise(resolve => setTimeout(resolve, system.duration));
       }
       
-      // Check for existing conversation history
-      let hasHistory = false;
-      try {
-        hasHistory = await conversationStorage.hasConversation();
-      } catch (error) {
-        console.error('Failed to check conversation history:', error);
+      // Check for existing conversation history and load it (only in production)
+      let savedConversation = null;
+      if (process.env.NODE_ENV === 'production') {
+        try {
+          savedConversation = await conversationStorage.loadConversation();
+        } catch (error) {
+          console.error('Failed to load conversation history:', error);
+        }
       }
       
       // Hide cursor and start messages
       setShowCursor(false);
       setHistory([]);
       
-      const finalMessage = hasHistory 
-        ? '> 1. restore previous session\n> 2. start new session'
-        : '> speak';
-      
       const messages = [
         '> connection established',
         '> you\'ve found the terminal',
         `> another visitor from ${userCity}`,
-        finalMessage
+        '> speak'
       ];
 
       setHistory(messages.map(() => ({ type: 'output', content: '', typewriter: false })));
@@ -90,12 +88,18 @@ export function useBootSequence(userCity: string, onBootComplete?: (hasHistory: 
         await new Promise(resolve => setTimeout(resolve, 300));
       }
 
-      setHistory(prev => [...prev, { type: 'output', content: '' }]);
+      // If we have saved conversation, restore it directly
+      if (savedConversation && savedConversation.length > 0) {
+        setHistory(savedConversation);
+      } else {
+        setHistory(prev => [...prev, { type: 'output', content: '' }]);
+      }
+      
       setIsBooting(false);
       
-      // Notify parent component about boot completion
+      // Notify parent component about boot completion (no longer needed for prompting)
       if (onBootComplete) {
-        onBootComplete(hasHistory);
+        onBootComplete(false);
       }
     };
 

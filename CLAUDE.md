@@ -12,6 +12,9 @@
 2. **DO NOT RUN BUILD UNLESS EXPLICITLY ASKED**
    - DO NOT run `pnpm run build` or `npm run build` unless the user specifically requests it
    - The user will tell you when they want to build
+   - DO NOT RUN BUILD UNLESS EXPLICITLY ASKED
+   - DO NOT RUN BUILD UNLESS EXPLICITLY ASKED
+   - DO NOT RUN BUILD UNLESS EXPLICITLY ASKED
 
 3. **USE PNPM, NOT NPM**
    - Always use `pnpm` for package management
