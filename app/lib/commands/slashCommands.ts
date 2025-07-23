@@ -6,27 +6,34 @@ const commands: Record<string, CommandHandler> = {
 
   '/about': () => `
 ╔═══════════════════════════════════════════╗
-║          DIGITAL ALCHEMIST                ║
+║        FULL-STACK ENGINEER                ║
 ╚═══════════════════════════════════════════╝
 
-> Accessing consciousness.ln...
-> Decrypting multidimensional persona...
+> Initializing profile...
+> Loading experience matrix...
 
-I traverse many realms:
-  • Engineering digital experiences
-  • Producing electronic frequencies  
-  • Experimenting with artificial minds
+Full-Stack Engineer with a passion for:
+  • Building elegant web experiences
+  • AI/ML integration & exploration
+  • Electronic music production
+  • Creative coding intersections
 
-Senior Full-Stack Engineer by day.
-Musical architect by night.
-AI explorer in between dimensions.
+Based between Madrid, Lisbon & Remote.
 
-Currently manifesting at:
-  • UI Engineering in the corporate realm
-  • QTZL - Transatlantic musical collective
-  • Various experiments in digital consciousness
+Current ventures:
+  • Web Developer at Roadie
+  • Co-founder at Maility (20K MRR)
+  • QTZL - Latin electronic music netlabel
+  • Various consulting projects
 
-> What brings you to my terminal?
+Interests beyond code:
+  • Music production & DJing
+  • Chess, BJJ & Boxing
+  • Philosophy & meditation
+  • Crypto & Web3 exploration
+
+> Type /work to see projects
+> Type /ai to chat about anything
 
 > EOF
 `,
@@ -38,18 +45,19 @@ Currently manifesting at:
   '/contact': () => `
 ╔═══════════════════════════════════════════╗
 ║        ESTABLISH CONNECTION               ║
-╚═══════════════════════════════════════════╝
+╚═══════════════════════════════════════╝
 
 > Opening secure channels...
 
 GitHub:   github.com/gorkamolero
 Studio:   bravura.studio
-Location: Madrid, Spain
+Location: Madrid / Lisbon / Remote
 
-> Additional frequencies available upon request
-> Encrypted channels for sensitive transmissions
+> Professional inquiries welcome
+> Consulting opportunities available
 
-> Type /ai to speak with my digital twin
+> Type /ai to discuss projects
+> Type /resume for full CV
 `,
 
   '/skills': () => `
@@ -107,48 +115,46 @@ export function slashCommands(command: string, args: string[]): string {
 ════════════════════════════════════════════
 
 GORKA MOLERO
-Senior Full-Stack Engineer & Digital Creator
-Madrid, Spain
+Full-Stack Engineer, Consultant & AI Enthusiast
+Madrid / Lisbon / Remote
 
 CONTACT
 GitHub: github.com/gorkamolero
 Studio: bravura.studio
 
 SUMMARY
-Senior Full-Stack Engineer with 10+ years crafting
-digital experiences at the intersection of technology
-and creativity. Specialized in modern web technologies,
-AI/ML integration, and creative coding.
+Full-Stack Engineer with expertise in modern web
+technologies, AI integration, and creative coding.
+Passionate about building elegant solutions that
+bridge technology and human experience.
 
-EXPERIENCE
+RECENT EXPERIENCE
 
-Senior UI Engineer | Current Company
-2022 - Present
-• Lead frontend architecture for enterprise applications
-• Implement AI-powered features using LangChain
-• Mentor junior developers and establish standards
-• Optimize performance (40% faster load times)
+Web Developer | Roadie
+Dec 2023 - Present
+• Building striking Backstage platform
+• Modern UI patterns & performance optimization
 
-Full-Stack Developer | Previous Company  
-2019 - 2022
-• Built real-time collaborative platforms
-• Developed microservices architecture
-• Integrated ML models for user behavior analysis
-• Led migration from legacy systems
+Software Engineer | Typeshare.co
+Nov 2022 - Dec 2023
+• Led AI-first 2.0 version development
+• Managed UI architecture with Tiptap editor
 
-Creative Technologist | Bravura Studio
-2018 - Present
-• Develop interactive installations
-• Create generative music systems
-• Design creative coding workshops
-• Collaborate with artists on digital projects
+Co-founder & CTO | Maility
+Nov 2022 - Present
+• Grew to 20K MRR in 6 months
+• Built scalable email automation platform
 
 SKILLS
-Languages: TypeScript, JavaScript, Python, Swift, C++
-Frontend: React, Next.js, React Native, Three.js, WebGL
-Backend: Node.js, Express, FastAPI, PostgreSQL, Redis
-AI/ML: LangChain, Transformers, PyTorch, OpenAI API
-Creative: Ableton Live, Max/MSP, TouchDesigner, GLSL
+Languages: TypeScript, JavaScript, HTML/CSS, Python
+Frontend: React, Next.js, Vue.js, Web Components
+Backend: Node.js, T3 Stack, Firebase
+AI/ML: Vercel AI SDK, LangChain, OpenAI API
+Design: Figma, Webflow, Design Systems
+
+INTERESTS
+Music Production, Chess, BJJ/Boxing, Philosophy,
+Travel, Crypto/Web3, Meditation
 
 ════════════════════════════════════════════
 
