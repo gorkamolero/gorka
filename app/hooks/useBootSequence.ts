@@ -15,25 +15,10 @@ export function useBootSequence(userCity: string, onBootComplete?: (hasHistory: 
   useEffect(() => {
     if (!userCity) return;
 
-    const typeMessage = async (message: string, index: number) => {
+    const addMessage = (message: string, index: number) => {
       setHistory(prev => {
         const newHistory = [...prev];
-        newHistory[index] = { type: 'output', content: '', typewriter: true };
-        return newHistory;
-      });
-
-      for (let i = 0; i <= message.length; i++) {
-        await new Promise(resolve => setTimeout(resolve, 25));
-        setHistory(prev => {
-          const newHistory = [...prev];
-          newHistory[index] = { type: 'output', content: message.substring(0, i), typewriter: true };
-          return newHistory;
-        });
-      }
-
-      setHistory(prev => {
-        const newHistory = [...prev];
-        newHistory[index] = { type: 'output', content: message, typewriter: false };
+        newHistory[index] = { type: 'output', content: message, typewriter: true };
         return newHistory;
       });
     };
@@ -80,11 +65,15 @@ export function useBootSequence(userCity: string, onBootComplete?: (hasHistory: 
         finalMessage
       ];
 
+      // Initialize all messages as empty
       setHistory(messages.map(() => ({ type: 'output', content: '', typewriter: false })));
 
+      // Add messages with typewriter effect
       for (let i = 0; i < messages.length; i++) {
-        await typeMessage(messages[i], i);
-        await new Promise(resolve => setTimeout(resolve, 300));
+        addMessage(messages[i], i);
+        // Wait for typewriter effect to complete (approximate time based on message length)
+        const typewriterDuration = messages[i].length * 30 + 500; // ~30ms per char + buffer
+        await new Promise(resolve => setTimeout(resolve, typewriterDuration));
       }
 
       await new Promise(resolve => setTimeout(resolve, 500));
