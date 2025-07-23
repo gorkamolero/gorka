@@ -5,30 +5,17 @@ export const SLASH_COMMANDS = [
   '/music',
   '/contact',
   '/skills',
-  '/resume',
-  '/ai'
+  '/resume'
 ] as const;
 
 export const TERMINAL_COMMANDS = [
   'clear',
   'cls',
   'ls',
-  'pwd',
   'cd',
   'cat',
   'vim',
-  'vi',
-  'whoami',
-  'echo',
-  'date',
-  'uname',
-  'uptime',
-  'history',
-  'hostname',
-  'which',
-  'mkdir',
-  'rm',
-  'touch'
+  'vi'
 ] as const;
 
 export const ALL_COMMANDS = [...SLASH_COMMANDS, ...TERMINAL_COMMANDS];

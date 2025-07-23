@@ -9,7 +9,11 @@
    - Claude is not the human and does not have the capability to run stuff in the background
    - NEVER, EVER, DO PNPM DEV OR ANYTHING OF THE SORT. YOU ARE NOT THE MAIN CHARACTER
 
-2. **USE PNPM, NOT NPM**
+2. **DO NOT RUN BUILD UNLESS EXPLICITLY ASKED**
+   - DO NOT run `pnpm run build` or `npm run build` unless the user specifically requests it
+   - The user will tell you when they want to build
+
+3. **USE PNPM, NOT NPM**
    - Always use `pnpm` for package management
    - Use `pnpm install`, `pnpm add`, etc.
 
