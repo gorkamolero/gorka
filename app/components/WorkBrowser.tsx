@@ -202,17 +202,23 @@ export default function WorkBrowser({ isActive, selectedProject, onClose }: Work
 export function formatWorkBrowser(selected: number, showDetails: boolean): string {
   if (showDetails) {
     const project = PROJECTS[selected];
-    return `╔═══════════════════════════════════════════╗
+    let display = `╔═══════════════════════════════════════════╗
 ║              ${project.name.toUpperCase().padEnd(29)}║
 ╚═══════════════════════════════════════════╝
 
 ${project.description.map(line => `  ${line}`).join('\n')}
 
   Tech: ${project.tech}
-${project.link ? `\n  Live: ${project.link}` : ''}
-${project.github ? `\n  Code: ${project.github}` : ''}
 
-> [Enter] Choose destination | [q/Esc] Back to list`;
+`;
+    
+    if (project.link || project.github) {
+      display += `> [Enter] Connect to source | [q/Esc] Back`;
+    } else {
+      display += `> [q/Esc] Back to list`;
+    }
+    
+    return display;
   }
 
   let display = `╔═══════════════════════════════════════════╗

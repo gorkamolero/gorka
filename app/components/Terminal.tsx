@@ -245,6 +245,14 @@ export default function Terminal() {
         setShowProjectDetails(false);
         replaceLastHistory(formatWorkBrowser(selectedProject, false));
         return;
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        const project = PROJECTS[selectedProject];
+        if (project.link || project.github) {
+          setWorkBrowserVisible(true);
+          setWorkBrowserActive(false);
+        }
+        return;
       }
     }
     
