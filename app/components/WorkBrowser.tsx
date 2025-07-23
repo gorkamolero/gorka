@@ -10,7 +10,7 @@ interface Project {
   tech: string;
   link?: string;
   github?: string;
-  image?: string;
+  images?: string[];
 }
 
 const PROJECTS: Project[] = [
@@ -27,7 +27,7 @@ const PROJECTS: Project[] = [
     tech: 'Blockchain, procedural generation, game design',
     link: 'degens.space',
     github: 'ask-to-get-access',
-    image: '/images/degens.gif'
+    images: ['/images/degens-1.jpg', '/images/degens-2.jpg', '/images/degens-3.jpg']
   },
   {
     name: 'Cybertantra',
@@ -40,7 +40,7 @@ const PROJECTS: Project[] = [
     ],
     tech: 'Bun, AI SDK, Mastra, Claude Opus 4',
     github: 'github.com/gorkamolero/cybertantra',
-    image: '/images/cybertantra-demo.gif'
+    images: ['/images/cybertantra-demo.gif']
   },
   {
     name: 'Music Production',
@@ -51,8 +51,7 @@ const PROJECTS: Project[] = [
       'flamenco cyberpunk isn\'t a genre yet',
       'but i\'m working on it'
     ],
-    tech: 'Ableton, synthesis, production',
-    image: '/images/music-production.gif'
+    tech: 'Ableton, synthesis, production'
   },
   {
     name: 'The Pulse',
@@ -67,7 +66,7 @@ const PROJECTS: Project[] = [
     tech: 'TypeScript, React, AI/ML',
     link: 'thepulse.app',
     github: 'github.com/gorkamolero/the-pulse',
-    image: '/images/The Pulse.jpeg'
+    images: ['/images/The Pulse.jpeg']
   },
   {
     name: 'Codex',
@@ -79,8 +78,7 @@ const PROJECTS: Project[] = [
       'Grok4 & Claude4 for translations'
     ],
     tech: 'Gemini OCR, Grok4/Claude4, AISDK',
-    github: 'github.com/gorkamolero/codex',
-    image: '/images/codex.png'
+    github: 'github.com/gorkamolero/codex'
   },
   {
     name: '777 Leftover Squawk',
@@ -93,7 +91,7 @@ const PROJECTS: Project[] = [
     ],
     tech: 'Next.js, Web Audio APIs, Redis playlists',
     link: '777leftoversquawk.vercel.app',
-    image: '/images/777LEFTOVERSQUAWK.jpeg'
+    images: ['/images/777LEFTOVERSQUAWK.jpeg']
   }
 ];
 
@@ -197,19 +195,51 @@ export default function WorkBrowser({ isActive, selectedProject, onClose, setHis
 
   return (
     <>
-      {/* Project Preview Image - only show when project has an image */}
-      {project.image && (
-        <div className="fixed top-20 right-10 z-50 border-2 border-green-400 bg-black p-2 shadow-2xl">
-          <div className="relative w-80 h-60 bg-black">
-            <Image
-              src={project.image}
-              alt={project.name}
-              fill
-              className="object-cover pixelated"
-              unoptimized={project.image.endsWith('.gif')}
-            />
-          </div>
-          <div className="mt-2 text-green-400 text-xs font-mono text-center">
+      {/* Project Preview Images - only show when project has images */}
+      {project.images && project.images.length > 0 && (
+        <div className="fixed top-20 right-10 z-50">
+          {project.images.length > 1 ? (
+            // Scrollable container for multiple images
+            <div className="w-80 max-h-[70vh] overflow-y-auto scrollbar-hide bg-black p-2">
+              {project.images.map((img, index) => (
+                <div key={index} className="relative mb-4 border border-green-400/20 overflow-hidden">
+                  {/* CRT effect and vignette overlay */}
+                  <div className="absolute inset-0 pointer-events-none z-10">
+                    <div className="absolute inset-0 bg-gradient-radial from-transparent via-transparent to-black/50" />
+                    <div className="absolute inset-0 crt-lines" />
+                  </div>
+                  <Image
+                    src={img}
+                    alt={`${project.name} ${index + 1}`}
+                    width={320}
+                    height={0}
+                    style={{ width: '100%', height: 'auto' }}
+                    className="pixelated"
+                    unoptimized={img.endsWith('.gif')}
+                  />
+                </div>
+              ))}
+            </div>
+          ) : (
+            // Single image display
+            <div className="relative border border-green-400/20 overflow-hidden">
+              {/* CRT effect and vignette overlay */}
+              <div className="absolute inset-0 pointer-events-none z-10">
+                <div className="absolute inset-0 bg-gradient-radial from-transparent via-transparent to-black/50" />
+                <div className="absolute inset-0 crt-lines" />
+              </div>
+              <Image
+                src={project.images[0]}
+                alt={project.name}
+                width={320}
+                height={0}
+                style={{ width: '100%', height: 'auto' }}
+                className="pixelated"
+                unoptimized={project.images[0].endsWith('.gif')}
+              />
+            </div>
+          )}
+          <div className="mt-2 text-green-400 text-xs font-mono text-center bg-black px-2 py-1">
             {project.name}
           </div>
         </div>

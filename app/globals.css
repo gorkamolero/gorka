@@ -377,3 +377,19 @@ input {
   );
   opacity: 0.5; /* Make it even more subtle */
 }
+
+/* CRT scanlines for images */
+.crt-lines {
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.15),
+    rgba(0, 0, 0, 0.15) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+}
+
+/* Radial gradient for vignette effect */
+.bg-gradient-radial {
+  background: radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.6) 100%);
+}
