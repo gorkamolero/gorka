@@ -9,13 +9,7 @@ export const SLASH_COMMANDS = [
 ] as const;
 
 export const TERMINAL_COMMANDS = [
-  'clear',
-  'cls',
-  'ls',
-  'cd',
-  'cat',
-  'vim',
-  'vi'
+  'clear'
 ] as const;
 
 export const ALL_COMMANDS = [...SLASH_COMMANDS, ...TERMINAL_COMMANDS];
