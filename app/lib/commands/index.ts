@@ -21,7 +21,7 @@ export function handleCommand(input: string): string | null {
   
   // Handle slash commands
   if (command.startsWith('/')) {
-    return slashCommands(command, args);
+    return slashCommands(command.toLowerCase(), args);
   }
   
   // If not a command, prepare for AI chat

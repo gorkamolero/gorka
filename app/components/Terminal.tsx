@@ -9,9 +9,15 @@ import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
 import CRTEffect from './CRTEffect';
 import TerminalHistory from './TerminalHistory';
 import TerminalInput from './TerminalInput';
-import { MUSIC_TRACKS } from '../lib/constants/music';
 import MusicPlayer from './MusicPlayer';
+import WorkBrowser, { formatWorkBrowser } from './WorkBrowser';
+import { formatHelpBrowser } from './HelpBrowser';
 import { useTerminalAI } from '../hooks/useTerminalAI';
+import { formatMusicPlayer } from '../lib/terminal/formatters';
+import { handleBrowserNavigation } from '../lib/terminal/browserHandlers';
+import { ALL_COMMANDS } from '../lib/commands/availableCommands';
+import { MUSIC_TRACKS } from '../lib/constants/music';
+import { PROJECTS } from './WorkBrowser';
 
 export default function Terminal() {
   const [input, setInput] = useState('');
@@ -19,13 +25,28 @@ export default function Terminal() {
   const [musicPlayerActive, setMusicPlayerActive] = useState(false);
   const [musicPlayerVisible, setMusicPlayerVisible] = useState(false);
   const [selectedTrack, setSelectedTrack] = useState(0);
+  const [workBrowserActive, setWorkBrowserActive] = useState(false);
+  const [workBrowserVisible, setWorkBrowserVisible] = useState(false);
+  const [selectedProject, setSelectedProject] = useState(0);
+  const [showProjectDetails, setShowProjectDetails] = useState(false);
+  const [helpBrowserActive, setHelpBrowserActive] = useState(false);
+  const [selectedCommand, setSelectedCommand] = useState(0);
   const terminalRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   
   const userCity = useGeolocation();
   const { history, setHistory, isBooting, showCursor } = useBootSequence(userCity);
   const { addCommand, navigateHistory } = useCommandHistory();
-  const { handleShortcut } = useKeyboardShortcuts({ input, setInput, setHistory, inputRef });
+  
+  const closeAllBrowsers = () => {
+    setHelpBrowserActive(false);
+    setWorkBrowserActive(false);
+    setWorkBrowserVisible(false);
+    setShowProjectDetails(false);
+    setMusicPlayerActive(false);
+  };
+  
+  const { handleShortcut } = useKeyboardShortcuts({ input, setInput, setHistory, inputRef, closeAllBrowsers });
   
   const streamingIndexRef = useRef<number | null>(null);
   
@@ -55,27 +76,6 @@ export default function Terminal() {
       }
     }
   });
-  const formatMusicPlayer = (selected: number): string => {
-    let display = `╔═══════════════════════════════════════════╗
-║              MUSIC                        ║
-╚═══════════════════════════════════════════╝
-
-`;
-    
-    MUSIC_TRACKS.forEach((track, index) => {
-      const isSelected = index === selected;
-      const prefix = isSelected ? '▶' : ' ';
-      display += `${prefix} [${index + 1}] ${track.name}\n`;
-      if (isSelected) {
-        display += `     └─ ${track.description}\n`;
-      }
-    });
-    
-    display += `
-> [↑/↓ or j/k] Navigate | [Enter] Play | [q] Exit`;
-    
-    return display;
-  };
 
   useEffect(() => {
     if (terminalRef.current) {
@@ -90,47 +90,136 @@ export default function Terminal() {
     }
   }, [isBooting]);
 
+  const executeCommand = (command: string) => {
+    addCommand(command);
+    const output = handleCommand(command);
+    
+    if (output === 'CLEAR_TERMINAL') {
+      setHistory([]);
+    } else if (output === 'SHOW_MUSIC_PLAYER') {
+      closeAllBrowsers();
+      setMusicPlayerActive(true);
+      setSelectedTrack(0);
+      const musicDisplay = formatMusicPlayer(0);
+      replaceLastHistory(`> ${command}`);
+      setHistory(prev => [...prev, { type: 'output', content: musicDisplay }]);
+    } else if (output === 'SHOW_WORK_BROWSER') {
+      closeAllBrowsers();
+      setWorkBrowserActive(true);
+      setSelectedProject(0);
+      setShowProjectDetails(false);
+      const workDisplay = formatWorkBrowser(0, false);
+      replaceLastHistory(`> ${command}`);
+      setHistory(prev => [...prev, { type: 'output', content: workDisplay }]);
+    } else if (output === 'SHOW_HELP_BROWSER') {
+      closeAllBrowsers();
+      setHelpBrowserActive(true);
+      setSelectedCommand(0);
+      const helpDisplay = formatHelpBrowser(0);
+      replaceLastHistory(`> ${command}`);
+      setHistory(prev => [...prev, { type: 'output', content: helpDisplay }]);
+    } else if (output) {
+      setHistory(prev => [...prev, { type: 'output', content: output }]);
+    } else {
+      sendMessage(command);
+    }
+  };
+
+  const replaceLastHistory = (content: string) => {
+    setHistory(prev => {
+      const newHistory = [...prev];
+      if (newHistory.length > 0) {
+        newHistory[newHistory.length - 1] = { type: 'output', content };
+      }
+      return newHistory;
+    });
+  };
+
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (helpBrowserActive) {
+      if (handleBrowserNavigation({
+        e,
+        selected: selectedCommand,
+        setSelected: setSelectedCommand,
+        setActive: setHelpBrowserActive,
+        setHistory,
+        formatter: formatHelpBrowser,
+        maxItems: ALL_COMMANDS.length,
+        onEnter: () => {
+          setHelpBrowserActive(false);
+          executeCommand(ALL_COMMANDS[selectedCommand]);
+        },
+        onNumberKey: (index) => {
+          setHelpBrowserActive(false);
+          executeCommand(ALL_COMMANDS[index]);
+        }
+      })) {
+        return;
+      }
+    }
+    
+    if (workBrowserActive && !showProjectDetails) {
+      if (handleBrowserNavigation({
+        e,
+        selected: selectedProject,
+        setSelected: setSelectedProject,
+        setActive: (active) => {
+          setWorkBrowserActive(active);
+          setWorkBrowserVisible(active);
+        },
+        setHistory,
+        formatter: (sel) => formatWorkBrowser(sel, false),
+        maxItems: PROJECTS.length,
+        onEnter: () => {
+          setShowProjectDetails(true);
+          setWorkBrowserVisible(true);
+          replaceLastHistory(formatWorkBrowser(selectedProject, true));
+        },
+        onNumberKey: (index) => {
+          setSelectedProject(index);
+          setShowProjectDetails(true);
+          setWorkBrowserVisible(true);
+          replaceLastHistory(formatWorkBrowser(index, true));
+        }
+      })) {
+        return;
+      }
+    }
+    
+    if (workBrowserActive && showProjectDetails) {
+      if (e.key === 'Escape' || e.key === 'q') {
+        e.preventDefault();
+        setShowProjectDetails(false);
+        replaceLastHistory(formatWorkBrowser(selectedProject, false));
+        return;
+      }
+    }
+    
     if (musicPlayerActive) {
-      if (e.key === 'ArrowUp' || e.key === 'k') {
-        e.preventDefault();
-        const newSelection = Math.max(0, selectedTrack - 1);
-        setSelectedTrack(newSelection);
-        setHistory(prev => {
-          const newHistory = [...prev];
-          newHistory[newHistory.length - 1] = { type: 'output', content: formatMusicPlayer(newSelection) };
-          return newHistory;
-        });
-      } else if (e.key === 'ArrowDown' || e.key === 'j') {
-        e.preventDefault();
-        const newSelection = Math.min(MUSIC_TRACKS.length - 1, selectedTrack + 1);
-        setSelectedTrack(newSelection);
-        setHistory(prev => {
-          const newHistory = [...prev];
-          newHistory[newHistory.length - 1] = { type: 'output', content: formatMusicPlayer(newSelection) };
-          return newHistory;
-        });
-      } else if (e.key === 'Enter') {
-        e.preventDefault();
-        const track = MUSIC_TRACKS[selectedTrack];
-        setMusicPlayerVisible(true);
-        setMusicPlayerActive(false);
-        setHistory(prev => [...prev, { type: 'output', content: `> Now playing: ${track.name}` }]);
-      } else if (e.key === 'q' || e.key === 'Escape') {
-        e.preventDefault();
-        setMusicPlayerActive(false);
-        setHistory(prev => [...prev, { type: 'output', content: '> Music player closed.' }]);
-      } else if (e.key >= '1' && e.key <= '9') {
-        const trackIndex = parseInt(e.key) - 1;
-        if (trackIndex < MUSIC_TRACKS.length) {
-          const track = MUSIC_TRACKS[trackIndex];
-          setSelectedTrack(trackIndex);
+      if (handleBrowserNavigation({
+        e,
+        selected: selectedTrack,
+        setSelected: setSelectedTrack,
+        setActive: setMusicPlayerActive,
+        setHistory,
+        formatter: formatMusicPlayer,
+        maxItems: MUSIC_TRACKS.length,
+        onEnter: () => {
+          const track = MUSIC_TRACKS[selectedTrack];
           setMusicPlayerVisible(true);
           setMusicPlayerActive(false);
-          setHistory(prev => [...prev, { type: 'output', content: `> Now playing: ${track.name}` }]);
+          replaceLastHistory(`> Now playing: ${track.name}`);
+        },
+        onNumberKey: (index) => {
+          const track = MUSIC_TRACKS[index];
+          setSelectedTrack(index);
+          setMusicPlayerVisible(true);
+          setMusicPlayerActive(false);
+          replaceLastHistory(`> Now playing: ${track.name}`);
         }
+      })) {
+        return;
       }
-      return;
     }
 
     if (handleShortcut(e)) {
@@ -151,10 +240,54 @@ export default function Terminal() {
         if (output === 'CLEAR_TERMINAL') {
           setHistory([]);
         } else if (output === 'SHOW_MUSIC_PLAYER') {
+          closeAllBrowsers();
           setMusicPlayerActive(true);
           setSelectedTrack(0);
           const musicDisplay = formatMusicPlayer(0);
-          setHistory(prev => [...prev, { type: 'output', content: musicDisplay }]);
+          setHistory(prev => {
+            const newHistory = [...prev];
+            while (newHistory.length > 0 && 
+                   (newHistory[newHistory.length - 1].content.includes('COMMANDS') ||
+                    newHistory[newHistory.length - 1].content.includes('MUSIC') ||
+                    newHistory[newHistory.length - 1].content.includes('WORK & PROJECTS'))) {
+              newHistory.pop();
+            }
+            newHistory.push({ type: 'output', content: musicDisplay });
+            return newHistory;
+          });
+        } else if (output === 'SHOW_WORK_BROWSER') {
+          closeAllBrowsers();
+          setWorkBrowserActive(true);
+          setSelectedProject(0);
+          setShowProjectDetails(false);
+          const workDisplay = formatWorkBrowser(0, false);
+          setHistory(prev => {
+            const newHistory = [...prev];
+            while (newHistory.length > 0 && 
+                   (newHistory[newHistory.length - 1].content.includes('COMMANDS') ||
+                    newHistory[newHistory.length - 1].content.includes('MUSIC') ||
+                    newHistory[newHistory.length - 1].content.includes('WORK & PROJECTS'))) {
+              newHistory.pop();
+            }
+            newHistory.push({ type: 'output', content: workDisplay });
+            return newHistory;
+          });
+        } else if (output === 'SHOW_HELP_BROWSER') {
+          closeAllBrowsers();
+          setHelpBrowserActive(true);
+          setSelectedCommand(0);
+          const helpDisplay = formatHelpBrowser(0);
+          setHistory(prev => {
+            const newHistory = [...prev];
+            while (newHistory.length > 0 && 
+                   (newHistory[newHistory.length - 1].content.includes('COMMANDS') ||
+                    newHistory[newHistory.length - 1].content.includes('MUSIC') ||
+                    newHistory[newHistory.length - 1].content.includes('WORK & PROJECTS'))) {
+              newHistory.pop();
+            }
+            newHistory.push({ type: 'output', content: helpDisplay });
+            return newHistory;
+          });
         } else if (output) {
           setHistory(prev => [...prev, { type: 'output', content: output }]);
         } else {
@@ -214,6 +347,16 @@ export default function Terminal() {
         isActive={musicPlayerVisible}
         initialTrack={selectedTrack}
         onClose={() => setMusicPlayerVisible(false)}
+      />
+      
+      {/* Work Browser */}
+      <WorkBrowser
+        isActive={workBrowserVisible}
+        selectedProject={selectedProject}
+        onClose={() => {
+          setWorkBrowserVisible(false);
+          setWorkBrowserActive(false);
+        }}
       />
     </CRTEffect>
   );

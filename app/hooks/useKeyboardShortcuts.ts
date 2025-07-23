@@ -12,16 +12,28 @@ interface UseKeyboardShortcutsProps {
   setInput: (value: string) => void;
   setHistory: (fn: (prev: HistoryEntry[]) => HistoryEntry[]) => void;
   inputRef: RefObject<HTMLInputElement | null>;
+  closeAllBrowsers?: () => void;
 }
 
 export function useKeyboardShortcuts({
   input,
   setInput,
   setHistory,
-  inputRef
+  inputRef,
+  closeAllBrowsers
 }: UseKeyboardShortcutsProps) {
   
   const handleShortcut = (e: KeyboardEvent<HTMLInputElement>): boolean => {
+    // Ctrl+C - Close all active browsers
+    if (e.ctrlKey && e.key === 'c') {
+      e.preventDefault();
+      if (closeAllBrowsers) {
+        closeAllBrowsers();
+        setHistory(prev => [...prev, { type: 'output', content: '> Closed.' }]);
+      }
+      return true;
+    }
+    
     // Ctrl+W - Delete word
     if (e.ctrlKey && e.key === 'w') {
       e.preventDefault();

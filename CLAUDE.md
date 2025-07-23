@@ -3,10 +3,11 @@
 ## CRITICAL RULES
 
 1. **NEVER RUN DEV SERVERS OR BACKGROUND PROCESSES**
-   - DO NOT run `npm run dev`, `npm start`, or any similar commands
+   - DO NOT run `npm run dev`, `npm start`, `pnpm dev`, or any similar commands
    - DO NOT run any process that stays running in the background
    - The human runs these commands, NOT Claude
    - Claude is not the human and does not have the capability to run stuff in the background
+   - NEVER, EVER, DO PNPM DEV OR ANYTHING OF THE SORT. YOU ARE NOT THE MAIN CHARACTER
 
 2. **USE PNPM, NOT NPM**
    - Always use `pnpm` for package management

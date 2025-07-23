@@ -1,9 +1,8 @@
-import { ALL_COMMANDS } from './availableCommands';
 
 type CommandHandler = (args: string[]) => string;
 
 const commands: Record<string, CommandHandler> = {
-  '/help': () => ALL_COMMANDS.join('\n'),
+  '/help': () => 'SHOW_HELP_BROWSER',
 
   '/about': () => `
 ╔═══════════════════════════════════════════╗
@@ -32,35 +31,7 @@ Currently manifesting at:
 > EOF
 `,
 
-  '/work': () => `
-╔═══════════════════════════════════════════╗
-║              WORK & PROJECTS              ║
-╚═══════════════════════════════════════════╝
-
-[1] The Pulse
-    └─ Description: AI-powered choose your own adventure game
-    └─ Tech: TypeScript, React, AI/ML, Game Design
-    └─ Status: Redefining interactive narratives
-
-[2] Tantra Translations
-    └─ Description: Sanskrit tantra translation platform
-    └─ Tech: React, Next.js, Sanskrit Processing
-    └─ Link: github.com/gorkamolero/tantras
-    └─ Status: Bridging ancient wisdom
-
-[3] Music Production
-    └─ Solo electronic music & producing Gitano de Palo
-    └─ Style: Flamenco Cyberpunk fusion
-    └─ Latest: Album released last year
-    └─ Listen: Type /music
-
-[4] UI Engineering
-    └─ Description: Various client projects
-    └─ Tech: TypeScript, React, Next.js
-    └─ Status: Crafting digital experiences
-
-> github.com/gorkamolero
-`,
+  '/work': () => 'SHOW_WORK_BROWSER',
 
   '/music': () => 'SHOW_MUSIC_PLAYER',
 
