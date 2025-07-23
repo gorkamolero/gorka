@@ -2,7 +2,7 @@ import { slashCommands } from './slashCommands';
 import { fileSystemCommands } from './fileSystemCommands';
 import { systemCommands } from './systemCommands';
 
-export function handleCommand(input: string): string {
+export function handleCommand(input: string): string | null {
   const trimmedInput = input.trim();
   const [command, ...args] = trimmedInput.split(' ');
   
@@ -24,10 +24,11 @@ export function handleCommand(input: string): string {
     return slashCommands(command, args);
   }
   
-  // If not a command, prepare for AI chat (to be implemented)
+  // If not a command, prepare for AI chat
   if (trimmedInput.startsWith('/')) {
     return `Command not found: ${command}\nType /help for available commands.`;
   }
   
-  return `AI chat coming soon. For now, try /help to see available commands.`;
+  // Return null to indicate this should be handled as AI chat
+  return null;
 }

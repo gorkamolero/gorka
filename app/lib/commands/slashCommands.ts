@@ -34,31 +34,32 @@ Currently manifesting at:
 
   '/work': () => `
 ╔═══════════════════════════════════════════╗
-║           DIGITAL ALCHEMY                 ║
+║              WORK & PROJECTS              ║
 ╚═══════════════════════════════════════════╝
 
-[1] Saga AI
-    └─ Description: Short AI video generator
-    └─ Tech: TypeScript, AI, Next.js
-    └─ Link: github.com/gorkamolero/saga-ai
-    └─ Status: Creating visual stories
+[1] The Pulse
+    └─ Description: AI-powered choose your own adventure game
+    └─ Tech: TypeScript, React, AI/ML, Game Design
+    └─ Status: Redefining interactive narratives
 
-[2] CyberTantra
-    └─ Description: AI Guru trained on 200 hours of RTTYoga teachings
-    └─ Tech: TypeScript, LLMs, Sacred Knowledge
-    └─ Status: Channeling ancient wisdom
+[2] Tantra Translations
+    └─ Description: Sanskrit tantra translation platform
+    └─ Tech: React, Next.js, Sanskrit Processing
+    └─ Link: github.com/gorkamolero/tantras
+    └─ Status: Bridging ancient wisdom
 
-[3] TubeSleuth (formerly Saga-AI)
-    └─ Description: Video analysis and insights
-    └─ Tech: TypeScript, React, APIs
-    └─ Link: github.com/gorkamolero/tubesleuth-app
+[3] Music Production
+    └─ Solo electronic music & producing Gitano de Palo
+    └─ Style: Flamenco Cyberpunk fusion
+    └─ Latest: Album released last year
+    └─ Listen: Type /music
 
-[4] AI Chatbot
-    └─ Description: Conversational AI experiments
-    └─ Tech: TypeScript, LLMs, Next.js
-    └─ Status: In eternal dialogue
+[4] UI Engineering
+    └─ Description: Various client projects
+    └─ Tech: TypeScript, React, Next.js
+    └─ Status: Crafting digital experiences
 
-> Use /work [number] to dive deeper
+> github.com/gorkamolero
 `,
 
   '/music': () => 'SHOW_MUSIC_PLAYER',

@@ -10,7 +10,10 @@
       "Bash(pnpm lint:*)",
       "Bash(git add:*)",
       "Bash(pnpm build:*)",
-      "WebFetch(domain:github.com)"
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:sdk.vercel.ai)",
+      "WebFetch(domain:ai-sdk.dev)",
+      "WebFetch(domain:www.npmjs.com)"
     ],
     "deny": []
   }

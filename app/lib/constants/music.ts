@@ -28,7 +28,7 @@ export const MUSIC_TRACKS: Track[] = [
   },
   { 
     name: 'Gitano de Palo - Alaiar', 
-    description: 'Full album experience',
+    description: 'Flamenco Cyberpunk album',
     url: 'https://www.youtube.com/watch?v=w_pKfQrww-4' 
   },
   { 

@@ -11,6 +11,7 @@ import TerminalHistory from './TerminalHistory';
 import TerminalInput from './TerminalInput';
 import { MUSIC_TRACKS } from '../lib/constants/music';
 import MusicPlayer from './MusicPlayer';
+import { useTerminalAI } from '../hooks/useTerminalAI';
 
 export default function Terminal() {
   const [input, setInput] = useState('');
@@ -21,13 +22,39 @@ export default function Terminal() {
   const terminalRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   
-  // Custom hooks
   const userCity = useGeolocation();
   const { history, setHistory, isBooting, showCursor } = useBootSequence(userCity);
   const { addCommand, navigateHistory } = useCommandHistory();
   const { handleShortcut } = useKeyboardShortcuts({ input, setInput, setHistory, inputRef });
-
-  // Format music player display
+  
+  const streamingIndexRef = useRef<number | null>(null);
+  
+  const { sendMessage } = useTerminalAI({
+    onMessage: (content, isAI) => {
+      if (isAI) {
+        setHistory(prev => {
+          const newHistory = [...prev];
+          
+          if (streamingIndexRef.current !== null && streamingIndexRef.current < newHistory.length) {
+            newHistory[streamingIndexRef.current] = {
+              type: 'output',
+              content: `> ${content}`
+            };
+          } else {
+            newHistory.push({ type: 'output', content: `> ${content}` });
+            streamingIndexRef.current = newHistory.length - 1;
+          }
+          
+          return newHistory;
+        });
+      }
+    },
+    onLoading: (loading) => {
+      if (!loading) {
+        streamingIndexRef.current = null;
+      }
+    }
+  });
   const formatMusicPlayer = (selected: number): string => {
     let display = `╔═══════════════════════════════════════════╗
 ║              MUSIC                        ║
@@ -50,14 +77,13 @@ export default function Terminal() {
     return display;
   };
 
-  // Auto-scroll to bottom
   useEffect(() => {
     if (terminalRef.current) {
       terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
     }
   }, [history]);
 
-  // Focus input after boot
+
   useEffect(() => {
     if (!isBooting) {
       setTimeout(() => inputRef.current?.focus(), 100);
@@ -65,13 +91,11 @@ export default function Terminal() {
   }, [isBooting]);
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    // Handle music player navigation
     if (musicPlayerActive) {
       if (e.key === 'ArrowUp' || e.key === 'k') {
         e.preventDefault();
         const newSelection = Math.max(0, selectedTrack - 1);
         setSelectedTrack(newSelection);
-        // Update the last output in history
         setHistory(prev => {
           const newHistory = [...prev];
           newHistory[newHistory.length - 1] = { type: 'output', content: formatMusicPlayer(newSelection) };
@@ -81,7 +105,6 @@ export default function Terminal() {
         e.preventDefault();
         const newSelection = Math.min(MUSIC_TRACKS.length - 1, selectedTrack + 1);
         setSelectedTrack(newSelection);
-        // Update the last output in history
         setHistory(prev => {
           const newHistory = [...prev];
           newHistory[newHistory.length - 1] = { type: 'output', content: formatMusicPlayer(newSelection) };
@@ -110,7 +133,6 @@ export default function Terminal() {
       return;
     }
 
-    // Handle shortcuts first
     if (handleShortcut(e)) {
       return;
     }
@@ -119,15 +141,13 @@ export default function Terminal() {
       if (input.trim()) {
         const trimmedInput = input.trim();
         
-        // Mark as interacted
         if (!hasInteracted) setHasInteracted(true);
-        
-        // Add to history
+
         setHistory(prev => [...prev, { type: 'input', content: `> ${trimmedInput}` }]);
         addCommand(trimmedInput);
-        
-        // Process command
+
         const output = handleCommand(trimmedInput);
+        
         if (output === 'CLEAR_TERMINAL') {
           setHistory([]);
         } else if (output === 'SHOW_MUSIC_PLAYER') {
@@ -135,8 +155,10 @@ export default function Terminal() {
           setSelectedTrack(0);
           const musicDisplay = formatMusicPlayer(0);
           setHistory(prev => [...prev, { type: 'output', content: musicDisplay }]);
-        } else {
+        } else if (output) {
           setHistory(prev => [...prev, { type: 'output', content: output }]);
+        } else {
+          sendMessage(trimmedInput);
         }
         setInput('');
       }
