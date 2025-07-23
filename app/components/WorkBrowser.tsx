@@ -25,18 +25,19 @@ const PROJECTS: Project[] = [
     ],
     tech: 'Blockchain, procedural generation, game design',
     link: 'degens.space',
+    github: 'ask-to-get-access',
     image: '/images/degens.gif'
   },
   {
     name: 'Cybertantra',
-    brief: 'Cyber-guru trained on 100+ hours of material',
+    brief: 'Command-line philosophical dialogue system',
     description: [
+      'CLI interface for consciousness exploration',
+      'Trained on tantra and philosophy',
       'RTT Yoga School teachings',
-      'Nietzsche-style philosopher',
-      'Digital consciousness exploration',
-      'Ancient wisdom meets AI'
+      'Digital philosopher & consciousness explorer'
     ],
-    tech: 'LLMs, philosophical knowledge base',
+    tech: 'Bun, AI SDK, Mastra, Claude Opus 4',
     github: 'github.com/gorkamolero/cybertantra',
     image: '/images/cybertantra.png'
   },
@@ -44,10 +45,10 @@ const PROJECTS: Project[] = [
     name: 'Music Production',
     brief: 'Electronic music & Flamenco Cyberpunk',
     description: [
-      'Solo electronic compositions',
-      'Producing Gitano de Palo',
-      'Album released last year',
-      'Type /music to listen'
+      'electronic music production and composition',
+      'solo music',
+      'flamenco cyberpunk isn\'t a genre yet',
+      'but i\'m working on it'
     ],
     tech: 'Ableton, synthesis, production',
     image: '/images/music-production.gif'
@@ -67,29 +68,30 @@ const PROJECTS: Project[] = [
     image: '/images/the-pulse.png'
   },
   {
-    name: 'Translation Platform',
-    brief: 'AI-powered translation tools',
+    name: 'Codex',
+    brief: 'Decode the past - ancient language translator',
     description: [
-      'Multi-language support',
-      'Context-aware translations',
-      'Technical documentation focus',
-      'Private deployment'
+      'Translating ancient tantras and texts',
+      'Currently working on Matangi Mahavidya',
+      'Gemini for OCR (better than Claude 4!)',
+      'Grok4 & Claude4 for translations'
     ],
-    tech: 'GPT-4, Next.js, i18n',
-    image: '/images/translation.png'
+    tech: 'Gemini OCR, Grok4/Claude4, AISDK',
+    github: 'github.com/gorkamolero/codex',
+    image: '/images/codex.png'
   },
   {
     name: '777 Leftover Squawk',
-    brief: '24-hour radio with story burning, created as bhakti to Matangi',
+    brief: 'Poetic dark horror radio - bhakti to Matangi',
     description: [
-      'Music interrupted by dark stories',
-      'Submit stories to burn in Matangi\'s pile',
-      'Cathartic release through frequency',
-      'Where darkness meets sound'
+      'An experience: poetic, dark, horror, radio',
+      'Built as bhakti (devotion) to Matangi',
+      'Users submit stories to burn in the pile',
+      'Music interrupted by darkness & poetry'
     ],
-    tech: 'Streaming architecture, story system',
+    tech: 'Next.js, Web Audio APIs, Redis playlists',
     link: '777leftoversquawk.vercel.app',
-    image: '/images/777-radio.gif'
+    image: '/images/777LEFTOVERSQUAWK.jpeg'
   }
 ];
 
@@ -97,51 +99,97 @@ interface WorkBrowserProps {
   isActive: boolean;
   selectedProject: number;
   onClose: () => void;
+  setHistory?: any;
 }
 
-export default function WorkBrowser({ isActive, selectedProject, onClose }: WorkBrowserProps) {
-  const [showModal, setShowModal] = useState(false);
+export default function WorkBrowser({ isActive, selectedProject, onClose, setHistory }: WorkBrowserProps) {
   const project = PROJECTS[selectedProject];
-
-  useEffect(() => {
-    if (!isActive) {
-      setShowModal(false);
-    }
-  }, [isActive]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!isActive) return;
       
-      if (showModal) {
-        if (e.key === 'Escape') {
-          setShowModal(false);
-        } else if (e.key === '1' && project.link) {
-          window.open(`https://${project.link}`, '_blank');
-          setShowModal(false);
-        } else if (e.key === '2' && project.github && project.link) {
-          window.open(`https://${project.github}`, '_blank');
-          setShowModal(false);
-        } else if (e.key === '1' && project.github && !project.link) {
-          window.open(`https://${project.github}`, '_blank');
-          setShowModal(false);
+      const openLink = (url: string) => {
+        if (!setHistory) return;
+        
+        onClose();
+        
+        // Add spinner to history
+        setHistory((prev: any) => [...prev, { 
+          type: 'output', 
+          content: `> [●∙∙]` 
+        }]);
+        
+        // Animate spinner
+        let dots = ['●', '∙', '∙'];
+        const spinnerInterval = setInterval(() => {
+          const activeIndex = dots.findIndex(dot => dot === '●');
+          dots = ['∙', '∙', '∙'];
+          dots[(activeIndex + 1) % 3] = '●';
+          
+          setHistory((prev: any) => {
+            const newHistory = [...prev];
+            if (newHistory.length > 0 && newHistory[newHistory.length - 1].content.includes('[')) {
+              newHistory[newHistory.length - 1] = {
+                type: 'output',
+                content: `> [${dots.join('')}]`
+              };
+            }
+            return newHistory;
+          });
+        }, 150);
+        
+        // Open link after 1 second
+        setTimeout(() => {
+          clearInterval(spinnerInterval);
+          window.open(url, '_blank');
+          
+          // Remove spinner line
+          setHistory((prev: any) => {
+            const newHistory = [...prev];
+            if (newHistory.length > 0 && newHistory[newHistory.length - 1].content.includes('[')) {
+              newHistory.pop();
+            }
+            return newHistory;
+          });
+        }, 1000);
+      };
+
+      if (e.key === 'Escape' || e.key === 'q') {
+        // Just close the WorkBrowser component, don't close the entire work browser
+        onClose();
+      } else if (e.key === '1' && project.link) {
+        openLink(`https://${project.link}`);
+      } else if (e.key === '2' && project.github && project.link) {
+        if (project.github === 'ask-to-get-access') {
+          // Do nothing - just a tease
+          return;
         }
-      } else {
-        if (e.key === 'Enter') {
-          setShowModal(true);
+        openLink(`https://${project.github}`);
+      } else if (e.key === '1' && project.github && !project.link) {
+        if (project.github === 'ask-to-get-access') {
+          // Do nothing - just a tease
+          return;
         }
+        openLink(`https://${project.github}`);
+      } else if (e.key === '3' && project.name === 'Codex') {
+        // Special case for Codex - third link
+        openLink('https://github.com/gorkamolero/tantras');
+      } else if (e.key === '2' && project.name === 'Codex' && !project.link) {
+        // Codex tantras repo when there's no live link
+        openLink('https://github.com/gorkamolero/tantras');
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isActive, showModal, onClose, project]);
+  }, [isActive, onClose, project, setHistory]);
 
   if (!isActive) return null;
 
   return (
     <>
-      {/* Project Preview Image */}
+      {/* Project Preview Image - always show when WorkBrowser is active */}
       <div className="fixed top-20 right-10 z-50 border-2 border-green-400 bg-black p-2 shadow-2xl">
         <div className="relative w-80 h-60 bg-black">
           {project.image ? (
@@ -162,39 +210,6 @@ export default function WorkBrowser({ isActive, selectedProject, onClose }: Work
           {project.name}
         </div>
       </div>
-
-      {/* Modal for project selection */}
-      {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80">
-          <div className="border-2 border-green-400 bg-black p-6 max-w-md">
-            <div className="text-green-400 font-mono">
-              <h3 className="text-lg mb-4">╔═══ {project.name.toUpperCase()} ═══╗</h3>
-              <div className="space-y-2 mb-4">
-                {project.link && (
-                  <div className="cursor-pointer hover:bg-green-400 hover:text-black p-2" 
-                       onClick={() => window.open(`https://${project.link}`, '_blank')}>
-                    [1] Visit Live Project → {project.link}
-                  </div>
-                )}
-                {project.github && (
-                  <div className="cursor-pointer hover:bg-green-400 hover:text-black p-2"
-                       onClick={() => window.open(`https://${project.github}`, '_blank')}>
-                    [{project.link ? '2' : '1'}] View Source Code → {project.github}
-                  </div>
-                )}
-                {!project.link && !project.github && (
-                  <div className="p-2 text-gray-500">
-                    [NO LINKS AVAILABLE]
-                  </div>
-                )}
-              </div>
-              <div className="text-xs mt-4">
-                Press [ESC] to close
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </>
   );
 }
@@ -213,10 +228,28 @@ ${project.description.map(line => `  ${line}`).join('\n')}
 `;
     
     if (project.link || project.github) {
-      display += `> [Enter] Connect to source | [q/Esc] Back`;
-    } else {
-      display += `> [q/Esc] Back to list`;
+      display += '\n  Links:\n';
+      let linkNum = 1;
+      if (project.link) {
+        display += `  [${linkNum}] Live → ${project.link}\n`;
+        linkNum++;
+      }
+      if (project.github) {
+        if (project.github === 'ask-to-get-access') {
+          display += `  [${linkNum}] Repo → [ask to get access]\n`;
+        } else {
+          display += `  [${linkNum}] GitHub → ${project.github}\n`;
+        }
+        linkNum++;
+      }
+      // Special case for Codex - add tantras repo
+      if (project.name === 'Codex') {
+        display += `  [${linkNum}] Tantras → github.com/gorkamolero/tantras\n`;
+      }
+      display += '\n';
     }
+    
+    display += `> [q/Esc] Back to list`;
     
     return display;
   }

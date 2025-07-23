@@ -284,7 +284,7 @@ export default function Terminal() {
       }
     }
     
-    if (workBrowserActive) {
+    if (workBrowserActive && !workBrowserVisible) {
       if (handleBrowserNavigation({
         e,
         selected: selectedProject,
@@ -543,6 +543,7 @@ export default function Terminal() {
           // Go back to project list
           replaceLastHistory(formatWorkBrowser(selectedProject, false));
         }}
+        setHistory={setHistory}
       />
       
       {/* Vim Mode */}
