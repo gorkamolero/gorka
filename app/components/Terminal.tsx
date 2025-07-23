@@ -63,33 +63,37 @@ function TerminalContent() {
   
   const streamingIndexRef = useRef<number | null>(null);
   
-  const { sendMessage, initializeWithHistory } = useTerminalChat({
-    onMessage: (content, isAI) => {
-      if (isAI) {
-        setHistory(prev => {
-          const newHistory = [...prev];
-          
-          if (streamingIndexRef.current !== null && streamingIndexRef.current < newHistory.length) {
-            newHistory[streamingIndexRef.current] = {
-              type: 'output',
-              content: `> ${content}`
-            };
-          } else {
-            newHistory.push({ type: 'output', content: `> ${content}` });
-            streamingIndexRef.current = newHistory.length - 1;
-          }
-          
-          return newHistory;
-        });
-      }
-    },
-    onLoading: (loading) => {
-      setIsWaitingForResponse(loading);
-      if (!loading) {
-        streamingIndexRef.current = null;
-        setTimeout(() => inputRef.current?.focus(), 100);
-      }
+  const handleChatMessage = useCallback((content: string, isAI: boolean) => {
+    if (isAI) {
+      setHistory(prev => {
+        const newHistory = [...prev];
+        
+        if (streamingIndexRef.current !== null && streamingIndexRef.current < newHistory.length) {
+          newHistory[streamingIndexRef.current] = {
+            type: 'output',
+            content: `> ${content}`
+          };
+        } else {
+          newHistory.push({ type: 'output', content: `> ${content}` });
+          streamingIndexRef.current = newHistory.length - 1;
+        }
+        
+        return newHistory;
+      });
     }
+  }, [setHistory]);
+
+  const handleChatLoading = useCallback((loading: boolean) => {
+    setIsWaitingForResponse(loading);
+    if (!loading) {
+      streamingIndexRef.current = null;
+      setTimeout(() => inputRef.current?.focus(), 100);
+    }
+  }, [setIsWaitingForResponse]);
+
+  const { sendMessage, initializeWithHistory } = useTerminalChat({
+    onMessage: handleChatMessage,
+    onLoading: handleChatLoading
   });
   
   // Initialize chat with conversation history only once after boot
@@ -97,7 +101,14 @@ function TerminalContent() {
   useEffect(() => {
     if (!isBooting && !initializedRef.current && history.length > 0) {
       const chatHistory = history.filter(entry => 
-        entry && entry.content && (entry.content.includes('> ') || entry.type === 'input')
+        entry && entry.content && 
+        (entry.type === 'input' || 
+         (entry.type === 'output' && 
+          !entry.content.includes('restore previous session') && 
+          !entry.content.includes('start new session') &&
+          !entry.content.includes('connection established') &&
+          !entry.content.includes('you\'ve found the terminal') &&
+          !entry.content.includes('another visitor from')))
       );
       if (chatHistory.length > 0) {
         initializeWithHistory(chatHistory);

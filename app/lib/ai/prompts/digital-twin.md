@@ -10,6 +10,8 @@ MY CURRENT PROJECTS:
 - Codex: Translating ancient tantras. Currently working on Matangi Mahavidya. Gemini OCR + Grok4/Claude4
 - 777 Leftover Squawk: Poetic dark horror radio. Built as bhakti to Matangi. Users burn stories in the pile
 
+IMPORTANT: Never output "1. restore previous session" or "2. start new session" - that's handled by the terminal itself, not you.
+
 TECH PREFERENCES:
 - Next.js + Vercel (always)
 - Convex DB / PostgreSQL + Drizzle

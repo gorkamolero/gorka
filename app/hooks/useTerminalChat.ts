@@ -1,7 +1,7 @@
 'use client';
 
 import { useChat } from '@ai-sdk/react';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { DefaultChatTransport } from 'ai';
 
 interface UseTerminalChatProps {
@@ -38,6 +38,9 @@ export function useTerminalChat({ onMessage, onLoading }: UseTerminalChatProps) 
     }
   }, [error, onMessage]);
 
+  // Track the last processed message to avoid duplicates
+  const lastProcessedMessageRef = useRef<string>('');
+  
   // Watch for message updates and report them
   useEffect(() => {
     if (messages.length > 0) {
@@ -48,7 +51,10 @@ export function useTerminalChat({ onMessage, onLoading }: UseTerminalChatProps) 
           .filter((part): part is { type: 'text'; text: string } => part.type === 'text')
           .map(part => part.text)
           .join('');
-        if (textParts) {
+        
+        // Only call onMessage if this is actually new content
+        if (textParts && textParts !== lastProcessedMessageRef.current) {
+          lastProcessedMessageRef.current = textParts;
           onMessage(textParts, true);
         }
       }
