@@ -225,7 +225,7 @@ export default function Terminal() {
         maxItems: PROJECTS.length,
         onEnter: () => {
           setShowProjectDetails(true);
-          setWorkBrowserVisible(true);
+          setWorkBrowserVisible(true); // Show the WorkBrowser component (with image)
           replaceLastHistory(formatWorkBrowser(selectedProject, true));
         },
         onNumberKey: (index) => {
@@ -247,11 +247,7 @@ export default function Terminal() {
         return;
       } else if (e.key === 'Enter') {
         e.preventDefault();
-        const project = PROJECTS[selectedProject];
-        if (project.link || project.github) {
-          setWorkBrowserVisible(true);
-          setWorkBrowserActive(false);
-        }
+        // Don't handle Enter here - let WorkBrowser component handle it
         return;
       }
     }
