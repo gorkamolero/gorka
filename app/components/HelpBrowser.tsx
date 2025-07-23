@@ -55,11 +55,42 @@ export function formatHelpBrowser(selected: number): string {
 
 `;
   
-  ALL_COMMANDS.forEach((command, index) => {
-    const isSelected = index === selected;
+  // First group: help, about, work, music, contact
+  const mainCommands = ['/help', '/about', '/work', '/music', '/contact'];
+  // Second group: skills, resume, themes
+  const utilityCommands = ['/skills', '/resume', '/themes'];
+  // Terminal commands
+  const terminalCommands = ['clear'];
+  
+  let commandIndex = 0;
+  
+  // Display main commands
+  mainCommands.forEach((command) => {
+    const isSelected = commandIndex === selected;
     const prefix = isSelected ? '▶' : ' ';
-    const num = index < 9 ? `[${index + 1}]` : '   ';
+    const num = commandIndex < 9 ? `[${commandIndex + 1}]` : '   ';
     display += `${prefix} ${num} ${command}\n`;
+    commandIndex++;
+  });
+  
+  display += '───────────────────────────────────────────\n';
+  
+  // Display utility commands
+  utilityCommands.forEach((command) => {
+    const isSelected = commandIndex === selected;
+    const prefix = isSelected ? '▶' : ' ';
+    const num = commandIndex < 9 ? `[${commandIndex + 1}]` : '   ';
+    display += `${prefix} ${num} ${command}\n`;
+    commandIndex++;
+  });
+  
+  // Display terminal commands
+  terminalCommands.forEach((command) => {
+    const isSelected = commandIndex === selected;
+    const prefix = isSelected ? '▶' : ' ';
+    const num = commandIndex < 9 ? `[${commandIndex + 1}]` : '   ';
+    display += `${prefix} ${num} ${command}\n`;
+    commandIndex++;
   });
   
   display += `

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import { ThemeProvider } from './contexts/ThemeContext';
 
 const jetbrainsMono = JetBrains_Mono({
   variable: "--font-jetbrains",
@@ -23,7 +24,9 @@ export default function RootLayout({
       <body
         className={`${jetbrainsMono.variable} font-mono antialiased`}
       >
-        {children}
+        <ThemeProvider>
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

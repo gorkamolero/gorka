@@ -7,7 +7,10 @@ import { useCommandHistory } from '../hooks/useCommandHistory';
 import { useGeolocation } from '../hooks/useGeolocation';
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
 import CRTEffect from './CRTEffect';
-import TerminalHistory from './TerminalHistory';
+import TypewriterText from './TypewriterText';
+import clsx from 'clsx';
+import { useTheme } from '../contexts/ThemeContext';
+import { THEMES, Theme } from '../lib/themes';
 import TerminalInput from './TerminalInput';
 import MusicPlayer from './MusicPlayer';
 import WorkBrowser, { formatWorkBrowser } from './WorkBrowser';
@@ -20,6 +23,7 @@ import { handleBrowserNavigation } from '../lib/terminal/browserHandlers';
 import { ALL_COMMANDS } from '../lib/commands/availableCommands';
 import { MUSIC_TRACKS } from '../lib/constants/music';
 import { PROJECTS } from './WorkBrowser';
+import { formatThemeBrowser, THEME_LIST } from './ThemeBrowser';
 
 export default function Terminal() {
   const [input, setInput] = useState('');
@@ -30,27 +34,30 @@ export default function Terminal() {
   const [workBrowserActive, setWorkBrowserActive] = useState(false);
   const [workBrowserVisible, setWorkBrowserVisible] = useState(false);
   const [selectedProject, setSelectedProject] = useState(0);
-  const [showProjectDetails, setShowProjectDetails] = useState(false);
   const [helpBrowserActive, setHelpBrowserActive] = useState(false);
   const [selectedCommand, setSelectedCommand] = useState(0);
   const [resumeBrowserActive, setResumeBrowserActive] = useState(false);
   const [selectedFormat, setSelectedFormat] = useState(0);
   const [vimModeActive, setVimModeActive] = useState(false);
+  const [themeBrowserActive, setThemeBrowserActive] = useState(false);
+  const [selectedTheme, setSelectedTheme] = useState(0);
+  const [showThemeSpinner, setShowThemeSpinner] = useState(false);
   const terminalRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   
   const userCity = useGeolocation();
   const { history, setHistory, isBooting, showCursor } = useBootSequence(userCity);
   const { addCommand, navigateHistory } = useCommandHistory();
+  const { theme, setTheme } = useTheme();
   
   const closeAllBrowsers = () => {
     setHelpBrowserActive(false);
     setWorkBrowserActive(false);
     setWorkBrowserVisible(false);
-    setShowProjectDetails(false);
     setMusicPlayerActive(false);
     setResumeBrowserActive(false);
     setVimModeActive(false);
+    setThemeBrowserActive(false);
   };
   
   const { handleShortcut } = useKeyboardShortcuts({ input, setInput, setHistory, inputRef, closeAllBrowsers });
@@ -117,7 +124,6 @@ export default function Terminal() {
       closeAllBrowsers();
       setWorkBrowserActive(true);
       setSelectedProject(0);
-      setShowProjectDetails(false);
       const workDisplay = formatWorkBrowser(0, false);
       replaceLastHistory(`> ${command}`);
       setHistory(prev => [...prev, { type: 'output', content: workDisplay }]);
@@ -139,6 +145,27 @@ export default function Terminal() {
       closeAllBrowsers();
       setVimModeActive(true);
       setHistory(prev => [...prev, { type: 'output', content: '> Entering vim...' }]);
+    } else if (output === 'SHOW_THEME_BROWSER') {
+      closeAllBrowsers();
+      setThemeBrowserActive(true);
+      setSelectedTheme(0);
+      const themeDisplay = formatThemeBrowser(0);
+      replaceLastHistory(`> ${command}`);
+      setHistory(prev => [...prev, { type: 'output', content: themeDisplay }]);
+    } else if (output && typeof output === 'string' && output.startsWith('CHANGE_THEME:')) {
+      const themeName = output.split(':')[1] as Theme;
+      if (THEMES[themeName]) {
+        setTheme(themeName);
+        setHistory(prev => [...prev, { 
+          type: 'output', 
+          content: `> Theme changed to ${THEMES[themeName].name}\n> ${THEMES[themeName].description}` 
+        }]);
+      } else {
+        setHistory(prev => [...prev, { 
+          type: 'output', 
+          content: `> Invalid theme: ${themeName}\n> Use /themes to see available themes` 
+        }]);
+      }
     } else if (output && typeof output === 'object' && 'typewriter' in output) {
       setHistory(prev => [...prev, { type: 'output', content: output.content, typewriter: true }]);
     } else if (output) {
@@ -163,6 +190,52 @@ export default function Terminal() {
     if (isWaitingForResponse && e.key !== 'Escape') {
       e.preventDefault();
       return;
+    }
+    
+    if (themeBrowserActive) {
+      if (handleBrowserNavigation({
+        e,
+        selected: selectedTheme,
+        setSelected: setSelectedTheme,
+        setActive: setThemeBrowserActive,
+        setHistory,
+        formatter: formatThemeBrowser,
+        maxItems: THEME_LIST.length,
+        onEnter: () => {
+          const themeName = THEME_LIST[selectedTheme];
+          setThemeBrowserActive(false);
+          setHistory(prev => [...prev, { 
+            type: 'output', 
+            content: `> ${THEMES[themeName].loadingMessage}` 
+          }]);
+          
+          setTimeout(() => {
+            setTheme(themeName);
+            setHistory(prev => [...prev, { 
+              type: 'output', 
+              content: `> Theme changed to ${THEMES[themeName].name}` 
+            }]);
+          }, 1500);
+        },
+        onNumberKey: (index) => {
+          const themeName = THEME_LIST[index];
+          setThemeBrowserActive(false);
+          setHistory(prev => [...prev, { 
+            type: 'output', 
+            content: `> ${THEMES[themeName].loadingMessage}` 
+          }]);
+          
+          setTimeout(() => {
+            setTheme(themeName);
+            setHistory(prev => [...prev, { 
+              type: 'output', 
+              content: `> Theme changed to ${THEMES[themeName].name}` 
+            }]);
+          }, 1500);
+        }
+      })) {
+        return;
+      }
     }
     
     if (resumeBrowserActive) {
@@ -211,7 +284,7 @@ export default function Terminal() {
       }
     }
     
-    if (workBrowserActive && !showProjectDetails) {
+    if (workBrowserActive) {
       if (handleBrowserNavigation({
         e,
         selected: selectedProject,
@@ -224,30 +297,19 @@ export default function Terminal() {
         formatter: (sel) => formatWorkBrowser(sel, false),
         maxItems: PROJECTS.length,
         onEnter: () => {
-          setShowProjectDetails(true);
-          setWorkBrowserVisible(true); // Show the WorkBrowser component (with image)
+          // Show project details in terminal
           replaceLastHistory(formatWorkBrowser(selectedProject, true));
+          setWorkBrowserVisible(true);
+          // Keep workBrowserActive true so WorkBrowser can handle keyboard events
         },
         onNumberKey: (index) => {
           setSelectedProject(index);
-          setShowProjectDetails(true);
-          setWorkBrowserVisible(true);
+          // Show project details in terminal
           replaceLastHistory(formatWorkBrowser(index, true));
+          setWorkBrowserVisible(true);
+          // Keep workBrowserActive true so WorkBrowser can handle keyboard events
         }
       })) {
-        return;
-      }
-    }
-    
-    if (workBrowserActive && showProjectDetails) {
-      if (e.key === 'Escape' || e.key === 'q') {
-        e.preventDefault();
-        setShowProjectDetails(false);
-        replaceLastHistory(formatWorkBrowser(selectedProject, false));
-        return;
-      } else if (e.key === 'Enter') {
-        e.preventDefault();
-        // Don't handle Enter here - let WorkBrowser component handle it
         return;
       }
     }
@@ -316,7 +378,6 @@ export default function Terminal() {
           closeAllBrowsers();
           setWorkBrowserActive(true);
           setSelectedProject(0);
-          setShowProjectDetails(false);
           const workDisplay = formatWorkBrowser(0, false);
           setHistory(prev => {
             const newHistory = [...prev];
@@ -366,6 +427,37 @@ export default function Terminal() {
           closeAllBrowsers();
           setVimModeActive(true);
           setHistory(prev => [...prev, { type: 'output', content: '> Entering vim...' }]);
+        } else if (output === 'SHOW_THEME_BROWSER') {
+          closeAllBrowsers();
+          setThemeBrowserActive(true);
+          setSelectedTheme(0);
+          const themeDisplay = formatThemeBrowser(0);
+          setHistory(prev => {
+            const newHistory = [...prev];
+            while (newHistory.length > 0 && 
+                   (newHistory[newHistory.length - 1].content.includes('THEMES') ||
+                    newHistory[newHistory.length - 1].content.includes('COMMANDS') ||
+                    newHistory[newHistory.length - 1].content.includes('MUSIC') ||
+                    newHistory[newHistory.length - 1].content.includes('WORK & PROJECTS'))) {
+              newHistory.pop();
+            }
+            newHistory.push({ type: 'output', content: themeDisplay });
+            return newHistory;
+          });
+        } else if (output && typeof output === 'string' && output.startsWith('CHANGE_THEME:')) {
+          const themeName = output.split(':')[1] as Theme;
+          if (THEMES[themeName]) {
+            setTheme(themeName);
+            setHistory(prev => [...prev, { 
+              type: 'output', 
+              content: `> Theme changed to ${THEMES[themeName].name}\n> ${THEMES[themeName].description}` 
+            }]);
+          } else {
+            setHistory(prev => [...prev, { 
+              type: 'output', 
+              content: `> Invalid theme: ${themeName}\n> Use /themes to see available themes` 
+            }]);
+          }
         } else if (output && typeof output === 'object' && 'typewriter' in output) {
           setHistory(prev => [...prev, { type: 'output', content: output.content, typewriter: true }]);
         } else if (output) {
@@ -405,12 +497,24 @@ export default function Terminal() {
             )}
 
             {/* Terminal history */}
-            {!showCursor && (
-              <TerminalHistory history={history} />
-            )}
+            {!showCursor && history.map((entry, index) => (
+              <div 
+                key={index}
+                className={clsx(
+                  'whitespace-pre-wrap mb-1',
+                  entry.type === 'input' ? 'text-yellow-300' : 'text-green-400'
+                )}
+              >
+                {entry.typewriter && entry.type === 'output' ? (
+                  <TypewriterText text={entry.content} />
+                ) : (
+                  entry.content
+                )}
+              </div>
+            ))}
             
             {/* Input line */}
-            {!isBooting && (
+            {!isBooting && !workBrowserVisible && (
               <TerminalInput
                 ref={inputRef}
                 value={input}
@@ -436,7 +540,8 @@ export default function Terminal() {
         selectedProject={selectedProject}
         onClose={() => {
           setWorkBrowserVisible(false);
-          setWorkBrowserActive(false);
+          // Go back to project list
+          replaceLastHistory(formatWorkBrowser(selectedProject, false));
         }}
       />
       

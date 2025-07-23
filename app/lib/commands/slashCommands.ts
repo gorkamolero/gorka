@@ -1,4 +1,6 @@
 
+import { getThemeDisplay } from '../themes';
+
 type CommandOutput = string | { content: string; typewriter: boolean };
 type CommandHandler = (args: string[]) => CommandOutput;
 
@@ -86,7 +88,21 @@ CREATIVE:
     typewriter: true
   }),
 
-  '/resume': () => 'SHOW_RESUME_BROWSER'
+  '/resume': () => 'SHOW_RESUME_BROWSER',
+
+  '/themes': (args) => {
+    if (args.length === 0) {
+      return 'SHOW_THEME_BROWSER';
+    }
+    return `CHANGE_THEME:${args[0]}`;
+  },
+
+  '/theme': (args) => {
+    if (args.length === 0) {
+      return 'SHOW_THEME_BROWSER';
+    }
+    return `CHANGE_THEME:${args[0]}`;
+  }
 };
 
 export function slashCommands(command: string, args: string[]): string | { content: string; typewriter: boolean } {

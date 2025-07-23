@@ -1,8 +1,21 @@
 @import "tailwindcss";
 
 :root {
-  --background: #000000;
-  --foreground: #00ff41;
+  /* Default theme (Matrix) colors */
+  --color-primary: #00ff41;
+  --color-secondary: #008f11;
+  --color-background: #0d0208;
+  --color-surface: #1a1a1a;
+  --color-text: #00ff41;
+  --color-input: #ffff00;
+  --color-cursor: #00ff41;
+  --color-selection: rgba(0, 255, 65, 0.3);
+  --color-error: #ff0040;
+  --color-glow: rgba(0, 255, 65, 0.5);
+  
+  /* Legacy variables for compatibility */
+  --background: var(--color-background);
+  --foreground: var(--color-primary);
   
   /* Glow intensity - adjust this value (0-1) to control all glow effects */
   --glow-intensity: 0.5; /* 0 = no glow, 1 = full neon */
@@ -12,16 +25,17 @@
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-green-400: #00ff41;
+  --color-background: var(--color-background);
+  --color-foreground: var(--color-primary);
+  --color-green-400: var(--color-primary);
+  --color-yellow-300: var(--color-input);
   --font-sans: var(--font-geist-sans);
   --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--color-background);
+  color: var(--color-text);
   font-family: var(--font-mono);
   overflow: hidden;
 }
@@ -46,8 +60,9 @@ body {
   height: 100%;
   background: linear-gradient(
     transparent 50%,
-    rgba(0, 255, 65, 0.08) 50%
+    var(--color-glow) 50%
   );
+  opacity: 0.08;
   background-size: 100% 3px;
   animation: scanlines 6s linear infinite;
   pointer-events: none;
@@ -183,29 +198,44 @@ body {
 
 /* Text glow effect - VSCode Neon style */
 .text-green-400 {
-  color: #00ff41;
+  color: var(--color-primary);
   text-shadow: 
     /* Tight bright glow */
     0 0 calc(2px * var(--glow-intensity)) rgba(255, 255, 255, var(--glow-intensity)),
     0 0 calc(4px * var(--glow-intensity)) rgba(255, 255, 255, calc(var(--glow-intensity) * 0.8)),
     0 0 calc(6px * var(--glow-intensity)) rgba(255, 255, 255, calc(var(--glow-intensity) * 0.6)),
     /* Color glow */
-    0 0 calc(10px * var(--glow-intensity)) rgba(0, 255, 65, calc(var(--glow-intensity) * 0.8)),
-    0 0 calc(15px * var(--glow-intensity)) rgba(0, 255, 65, calc(var(--glow-intensity) * 0.6)),
-    0 0 calc(20px * var(--glow-intensity)) rgba(0, 255, 65, calc(var(--glow-intensity) * 0.4)),
-    0 0 calc(30px * var(--glow-intensity)) rgba(0, 255, 65, calc(var(--glow-intensity) * 0.2)),
-    0 0 calc(40px * var(--glow-intensity)) rgba(0, 255, 65, calc(var(--glow-intensity) * 0.1));
+    0 0 calc(10px * var(--glow-intensity)) var(--color-glow),
+    0 0 calc(15px * var(--glow-intensity)) var(--color-glow),
+    0 0 calc(20px * var(--glow-intensity)) var(--color-glow),
+    0 0 calc(30px * var(--glow-intensity)) var(--color-glow),
+    0 0 calc(40px * var(--glow-intensity)) var(--color-glow);
 }
+
+.text-yellow-300 {
+  color: var(--color-input);
+}
+
 
 /* Even stronger glow for blinking cursor */
 .bg-green-400.animate-pulse {
-  background: #00ff41;
+  background: var(--color-cursor);
   box-shadow:
     0 0 calc(5px * var(--glow-intensity)) rgba(255, 255, 255, var(--glow-intensity)),
-    0 0 calc(10px * var(--glow-intensity)) rgba(0, 255, 65, calc(var(--glow-intensity) * 0.8)),
-    0 0 calc(15px * var(--glow-intensity)) rgba(0, 255, 65, calc(var(--glow-intensity) * 0.6)),
-    0 0 calc(20px * var(--glow-intensity)) rgba(0, 255, 65, calc(var(--glow-intensity) * 0.4)),
-    0 0 calc(35px * var(--glow-intensity)) rgba(0, 255, 65, calc(var(--glow-intensity) * 0.2));
+    0 0 calc(10px * var(--glow-intensity)) var(--color-glow),
+    0 0 calc(15px * var(--glow-intensity)) var(--color-glow),
+    0 0 calc(20px * var(--glow-intensity)) var(--color-glow),
+    0 0 calc(35px * var(--glow-intensity)) var(--color-glow);
+}
+
+.bg-green-400 {
+  background-color: var(--color-cursor);
+}
+
+/* Dynamic placeholder color */
+input::placeholder {
+  color: var(--color-secondary);
+  opacity: 0.7;
 }
 
 /* Cursor blink */

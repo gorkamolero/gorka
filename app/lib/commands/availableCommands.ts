@@ -5,7 +5,8 @@ export const SLASH_COMMANDS = [
   '/music',
   '/contact',
   '/skills',
-  '/resume'
+  '/resume',
+  '/themes'
 ] as const;
 
 export const TERMINAL_COMMANDS = [
