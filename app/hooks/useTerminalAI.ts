@@ -3,9 +3,10 @@ import { useState } from 'react';
 interface UseTerminalAIProps {
   onMessage: (content: string, isAI: boolean) => void;
   onLoading: (loading: boolean) => void;
+  getHistory?: () => Array<{ type: 'input' | 'output'; content: string }>;
 }
 
-export function useTerminalAI({ onMessage, onLoading }: UseTerminalAIProps) {
+export function useTerminalAI({ onMessage, onLoading, getHistory }: UseTerminalAIProps) {
   const [isLoading, setIsLoading] = useState(false);
 
   const sendMessage = async (content: string) => {
@@ -13,12 +14,17 @@ export function useTerminalAI({ onMessage, onLoading }: UseTerminalAIProps) {
     onLoading(true);
     
     try {
+      const conversationHistory = getHistory ? getHistory() : [];
+      
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ prompt: content }),
+        body: JSON.stringify({ 
+          prompt: content,
+          history: conversationHistory 
+        }),
       });
 
       if (!response.ok) {

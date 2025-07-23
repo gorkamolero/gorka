@@ -89,7 +89,8 @@ function TerminalContent() {
         streamingIndexRef.current = null;
         setTimeout(() => inputRef.current?.focus(), 100);
       }
-    }
+    },
+    getHistory: () => history.filter(entry => entry && (entry.content.startsWith('> ') || entry.type === 'input'))
   });
 
   const { executeCommand, replaceLastHistory } = useCommandExecutor(setHistory, setTheme, sendMessage);

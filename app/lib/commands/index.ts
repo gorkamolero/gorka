@@ -23,8 +23,15 @@ export function handleCommand(input: string): string | { content: string; typewr
   
   // Try handling as slash command without the slash
   const slashCommandResult = slashCommands(`/${command.toLowerCase()}`, args);
-  if (slashCommandResult && !slashCommandResult.includes('Command not found')) {
-    return slashCommandResult;
+  if (slashCommandResult) {
+    // Check if it's a string or object with content
+    const resultText = typeof slashCommandResult === 'string' 
+      ? slashCommandResult 
+      : slashCommandResult.content;
+    
+    if (!resultText.includes('Command not found')) {
+      return slashCommandResult;
+    }
   }
   
   if (trimmedInput.startsWith('/')) {
