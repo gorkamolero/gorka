@@ -116,6 +116,7 @@ function TerminalContent() {
       }
     }
   }, [isBooting, history, initializeWithHistory]);
+  
 
   const { executeCommand, replaceLastHistory } = useCommandExecutor(setHistory, setTheme, sendMessage);
 

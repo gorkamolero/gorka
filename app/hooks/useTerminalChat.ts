@@ -46,50 +46,49 @@ export function useTerminalChat({ onMessage, onLoading }: UseTerminalChatProps) 
     if (messages.length > 0) {
       const lastMessage = messages[messages.length - 1];
       if (lastMessage.role === 'assistant') {
-        // Extract text from message parts
-        const textParts = lastMessage.parts
-          .filter((part): part is { type: 'text'; text: string } => part.type === 'text')
-          .map(part => part.text)
-          .join('');
+        let textContent = '';
+        
+        // Extract text from parts array
+        if (lastMessage.parts && Array.isArray(lastMessage.parts)) {
+          textContent = lastMessage.parts
+            .filter((part): part is { type: 'text'; text: string } => part.type === 'text')
+            .map(part => part.text)
+            .join('');
+        }
         
         // Only call onMessage if this is actually new content
-        if (textParts && textParts !== lastProcessedMessageRef.current) {
-          lastProcessedMessageRef.current = textParts;
-          onMessage(textParts, true);
+        if (textContent && textContent !== lastProcessedMessageRef.current) {
+          lastProcessedMessageRef.current = textContent;
+          onMessage(textContent, true);
         }
       }
     }
   }, [messages, onMessage]);
 
-  // Send message function that wraps sendChatMessage
-  const sendMessage = useCallback(async (content: string) => {
-    await sendChatMessage({
-      role: 'user' as const,
-      parts: [{
-        type: 'text' as const,
-        text: content,
-      }],
-    });
-  }, [sendChatMessage]);
-
-  // Initialize conversation with history from terminal
+  // Initialize with conversation history
   const initializeWithHistory = useCallback((history: Array<{ type: 'input' | 'output'; content: string }>) => {
-    const aiMessages = history
-      .filter(entry => entry && entry.content)
-      .map(entry => ({
-        id: Math.random().toString(36).substring(7),
-        role: entry.type === 'input' ? 'user' as const : 'assistant' as const,
-        parts: [{
-          type: 'text' as const,
-          text: entry.content.replace(/^> /, ''),
-        }],
-      }));
-
-    setMessages(aiMessages);
+    const uiMessages = history
+      .filter(entry => entry && entry.content && entry.content.trim())
+      .map(entry => {
+        const text = entry.content.replace(/^> /, '').trim();
+        return text ? {
+          id: Math.random().toString(36).substring(7),
+          role: entry.type === 'input' ? 'user' as const : 'assistant' as const,
+          parts: [{
+            type: 'text' as const,
+            text: text
+          }]
+        } : null;
+      })
+      .filter((msg): msg is NonNullable<typeof msg> => msg !== null);
+    
+    if (uiMessages.length > 0) {
+      setMessages(uiMessages);
+    }
   }, [setMessages]);
 
   return {
-    sendMessage,
+    sendMessage: sendChatMessage,
     initializeWithHistory,
   };
 }

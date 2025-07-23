@@ -16,7 +16,7 @@ type HistoryEntry = {
 export function useCommandExecutor(
   setHistory: (fn: (prev: HistoryEntry[]) => HistoryEntry[]) => void,
   setTheme: (theme: Theme) => void,
-  sendMessage: (message: string) => void
+  sendMessage: (message: { text: string }) => void
 ) {
   const {
     setMusicPlayerActive,
@@ -110,7 +110,7 @@ export function useCommandExecutor(
     } else if (output) {
       setHistory(prev => [...prev, { type: 'output', content: output }]);
     } else {
-      sendMessage(command);
+      sendMessage({ text: command });
     }
   };
 

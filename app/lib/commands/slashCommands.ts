@@ -1,14 +1,12 @@
-
-
 type CommandOutput = string | { content: string; typewriter: boolean };
 type CommandHandler = (args: string[]) => CommandOutput;
 
 const commands: Record<string, CommandHandler> = {
-  '/help': () => 'SHOW_HELP_BROWSER',
+  "/help": () => "SHOW_HELP_BROWSER",
 
-  '/about': () => ({
+  "/about": () => ({
     content: `
-> gorka molero
+> gorka
 
 i build things
 sometimes they're useful
@@ -22,14 +20,14 @@ then i switch contexts
 explore something else
 the cycle continues
 `,
-    typewriter: true
+    typewriter: true,
   }),
 
-  '/work': () => 'SHOW_WORK_BROWSER',
+  "/work": () => "SHOW_WORK_BROWSER",
 
-  '/music': () => 'SHOW_MUSIC_PLAYER',
+  "/music": () => "SHOW_MUSIC_PLAYER",
 
-  '/contact': () => ({
+  "/contact": () => ({
     content: `
 ╔═══════════════════════════════════════════╗
 ║        ESTABLISH CONNECTION               ║
@@ -47,10 +45,10 @@ Location: Madrid / Lisbon / US
 > Type /work for project details
 > Or just start chatting
 `,
-    typewriter: true
+    typewriter: true,
   }),
 
-  '/skills': () => ({
+  "/skills": () => ({
     content: `
 ╔═══════════════════════════════════════════╗
 ║       TECH STACK & PREFERENCES            ║
@@ -84,31 +82,34 @@ CREATIVE:
 
 > Strong opinions, loosely held (but mostly strong)
 `,
-    typewriter: true
+    typewriter: true,
   }),
 
-  '/resume': () => 'SHOW_RESUME_BROWSER',
+  "/resume": () => "SHOW_RESUME_BROWSER",
 
-  '/themes': (args) => {
+  "/themes": (args) => {
     if (args.length === 0) {
-      return 'SHOW_THEME_BROWSER';
+      return "SHOW_THEME_BROWSER";
     }
     return `CHANGE_THEME:${args[0]}`;
   },
 
-  '/theme': (args) => {
+  "/theme": (args) => {
     if (args.length === 0) {
-      return 'SHOW_THEME_BROWSER';
+      return "SHOW_THEME_BROWSER";
     }
     return `CHANGE_THEME:${args[0]}`;
-  }
+  },
 };
 
-export function slashCommands(command: string, args: string[]): string | { content: string; typewriter: boolean } {
-  if (command === '/resume' && args.length > 0) {
+export function slashCommands(
+  command: string,
+  args: string[],
+): string | { content: string; typewriter: boolean } {
+  if (command === "/resume" && args.length > 0) {
     const format = args[0].toLowerCase();
     switch (format) {
-      case 'pdf':
+      case "pdf":
         return `
 > Initiating download: gorka_molero_resume.pdf
 > Format: PDF (Professional Layout)
@@ -116,7 +117,7 @@ export function slashCommands(command: string, args: string[]): string | { conte
 [!] PDF generation in progress...
 [!] For now, try: /resume txt or /resume json
 `;
-      case 'txt':
+      case "txt":
         return `
 > Generating plain text resume...
 > Accessing /api/resume?format=txt...
@@ -169,9 +170,9 @@ BJJ/Boxing, Philosophy, Crypto, AI/AGI
 
 ════════════════════════════════════════════
 
-> Full resume: curl ${typeof window !== 'undefined' ? window.location.origin : ''}/api/resume?format=txt
+> Full resume: curl ${typeof window !== "undefined" ? window.location.origin : ""}/api/resume?format=txt
 `;
-      case 'json':
+      case "json":
         return `
 > Exporting resume data as JSON...
 > Accessing /api/resume?format=json...
@@ -209,16 +210,16 @@ BJJ/Boxing, Philosophy, Crypto, AI/AGI
   }
 }
 
-> Full JSON: curl ${typeof window !== 'undefined' ? window.location.origin : ''}/api/resume
+> Full JSON: curl ${typeof window !== "undefined" ? window.location.origin : ""}/api/resume
 `;
       default:
         return `Unknown format: ${format}\nAvailable formats: pdf, txt, json`;
     }
   }
-  
+
   if (command in commands) {
     return commands[command](args);
   }
-  
-  return '';
+
+  return "";
 }
