@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import Image from 'next/image';
 
-import { Project, PROJECTS } from '../lib/constants/projects';
+import { PROJECTS } from '../lib/constants/projects';
 
 interface HistoryEntry {
   type: 'input' | 'output';
