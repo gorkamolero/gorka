@@ -66,8 +66,8 @@ Location: Madrid / Lisbon / Remote
 ╚═══════════════════════════════════════════╝
 
 PREFERRED STACK:
-  [████████████████████] Next.js (always)
-  [████████████████████] Vercel (deployment done right)
+  [████████████████████] Next.js
+  [████████████████████] Vercel
   [████████████████████] Convex DB / PostgreSQL
   [████████████████░░░░] Drizzle ORM
   [██████████████████░░] Bun > Node.js
@@ -79,12 +79,12 @@ AI/ML TOOLS:
   [████████████████████] Claude (Opus/Sonnet) > all
   [██████████████░░░░░░] Grok for X/Twitter context
   [████████████░░░░░░░░] Kimi K2 (testing)
-  [░░░░░░░░░░░░░░░░░░░░] OpenAI (if forced)
+  [░░░░░░░░░░░░░░░░░░░░] OpenAI
 
 DEV ENVIRONMENT:
-  [████████████████████] Claude Code (this is the way)
+  [████████████████████] Claude Code
   [████████████████████] Opencode + Zed Editor
-  [░░░░░░░░░░░░░░░░░░░░] Cursor/Windsurf (hard pass)
+  [░░░░░░░░░░░░░░░░░░░░] Cursor/Windsurf
 
 CREATIVE:
   [████████████████████] Ableton Live
@@ -148,18 +148,18 @@ Nov 2022 - Present
 • Grew to 20K MRR in 6 months
 • Built scalable email automation platform
 
-TECH STACK (OPINIONS INCLUDED)
-• Next.js + Vercel (the only way)
+TECH STACK
+• Next.js + Vercel
 • Convex DB / PostgreSQL + Drizzle
 • Bun > Node.js
 • shadcn/ui + Tailwind
-• Claude Code + Zed (NOT Cursor)
+• Claude Code + Zed
 • Vercel AI SDK + Mastra/CrewAI
 • Claude > Grok > Kimi > OpenAI
 
 INTERESTS
-X/Twitter (TPOT), Music Production, Chess (1800+),
-BJJ/Boxing, Philosophy, Crypto (builder), AI/AGI
+X/Twitter + TPOT, Music Production, Chess,
+BJJ/Boxing, Philosophy, Crypto, AI/AGI
 
 ════════════════════════════════════════════
 

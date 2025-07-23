@@ -9,16 +9,13 @@ export async function getUserCity(): Promise<string> {
     });
     
     if (!response.ok) {
-      console.error('Geolocation API error:', response.status);
       return 'UNKNOWN';
     }
     
     const data = await response.json();
-    console.log('Geolocation data:', data); // Debug log
     
     return data.city ? data.city.toUpperCase() : 'UNKNOWN';
-  } catch (error) {
-    console.error('Failed to get user location:', error);
+  } catch {
     return 'UNKNOWN';
   }
 }

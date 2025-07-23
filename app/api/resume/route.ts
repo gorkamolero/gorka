@@ -64,8 +64,8 @@ const RESUME_DATA = {
   ],
   skills: {
     stack: [
-      "Next.js (always)",
-      "Vercel (deployment done right)", 
+      "Next.js",
+      "Vercel", 
       "Convex DB / PostgreSQL",
       "Drizzle ORM",
       "Bun > Node.js",
@@ -77,13 +77,13 @@ const RESUME_DATA = {
       "Claude (Opus/Sonnet) > all",
       "Grok for X/Twitter context",
       "Kimi K2 (testing)",
-      "NOT OpenAI (if avoidable)"
+      "NOT OpenAI"
     ],
     tools: [
-      "Claude Code (this is the way)",
+      "Claude Code",
       "Opencode + Zed Editor",
       "NOT Cursor/Windsurf",
-      "Git (obviously)",
+      "Git",
       "Vercel CI/CD"
     ],
     creative: ["Ableton Live", "Max/MSP", "Music Production"]
@@ -106,12 +106,12 @@ const RESUME_DATA = {
     }
   ],
   interests: [
-    "X/Twitter (especially TPOT)",
+    "X/Twitter + TPOT",
     "Music Production & DJing",
-    "Chess (1800+ rapid)",
+    "Chess",
     "Brazilian Jiu-Jitsu & Boxing",
     "Philosophy & Meditation",
-    "Crypto/Web3 (builder, not trader)",
+    "Crypto/Web3",
     "AI/AGI discourse",
     "Post-rationalist thought"
   ],

@@ -40,7 +40,6 @@ export function useTerminalAI({ onMessage, onLoading }: UseTerminalAIProps) {
         }
       }
     } catch (error) {
-      console.error('AI request failed:', error);
       onMessage(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`, true);
     } finally {
       setIsLoading(false);
