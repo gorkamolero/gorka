@@ -83,34 +83,7 @@ CREATIVE:
 > Loading additional skills...
 `,
 
-  '/resume': () => `
-╔═══════════════════════════════════════════╗
-║              RESUME                       ║
-╚═══════════════════════════════════════════╝
-
-> Generating secure download link...
-> Encrypting connection...
-> Ready.
-
-📄 Resume available in multiple formats:
-
-[1] PDF Format (Recommended)
-    └─ Professional layout
-    └─ ATS-friendly
-    └─ Download: /resume pdf
-
-[2] Plain Text Format
-    └─ Terminal-friendly
-    └─ Maximum compatibility
-    └─ Download: /resume txt
-
-[3] JSON Format
-    └─ Machine readable
-    └─ API-friendly
-    └─ Download: /resume json
-
-> Type /resume [format] to download
-`
+  '/resume': () => 'SHOW_RESUME_BROWSER'
 };
 
 export function slashCommands(command: string, args: string[]): string {

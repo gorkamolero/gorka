@@ -12,6 +12,7 @@ import TerminalInput from './TerminalInput';
 import MusicPlayer from './MusicPlayer';
 import WorkBrowser, { formatWorkBrowser } from './WorkBrowser';
 import { formatHelpBrowser } from './HelpBrowser';
+import { formatResumeBrowser, RESUME_FORMATS } from './ResumeBrowser';
 import VimMode from './VimMode';
 import { useTerminalAI } from '../hooks/useTerminalAI';
 import { formatMusicPlayer } from '../lib/terminal/formatters';
@@ -32,6 +33,8 @@ export default function Terminal() {
   const [showProjectDetails, setShowProjectDetails] = useState(false);
   const [helpBrowserActive, setHelpBrowserActive] = useState(false);
   const [selectedCommand, setSelectedCommand] = useState(0);
+  const [resumeBrowserActive, setResumeBrowserActive] = useState(false);
+  const [selectedFormat, setSelectedFormat] = useState(0);
   const [vimModeActive, setVimModeActive] = useState(false);
   const terminalRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -46,6 +49,7 @@ export default function Terminal() {
     setWorkBrowserVisible(false);
     setShowProjectDetails(false);
     setMusicPlayerActive(false);
+    setResumeBrowserActive(false);
     setVimModeActive(false);
   };
   
@@ -124,6 +128,13 @@ export default function Terminal() {
       const helpDisplay = formatHelpBrowser(0);
       replaceLastHistory(`> ${command}`);
       setHistory(prev => [...prev, { type: 'output', content: helpDisplay }]);
+    } else if (output === 'SHOW_RESUME_BROWSER') {
+      closeAllBrowsers();
+      setResumeBrowserActive(true);
+      setSelectedFormat(0);
+      const resumeDisplay = formatResumeBrowser(0);
+      replaceLastHistory(`> ${command}`);
+      setHistory(prev => [...prev, { type: 'output', content: resumeDisplay }]);
     } else if (output === 'SHOW_VIM_MODE') {
       closeAllBrowsers();
       setVimModeActive(true);
@@ -150,6 +161,30 @@ export default function Terminal() {
     if (isWaitingForResponse && e.key !== 'Escape') {
       e.preventDefault();
       return;
+    }
+    
+    if (resumeBrowserActive) {
+      if (handleBrowserNavigation({
+        e,
+        selected: selectedFormat,
+        setSelected: setSelectedFormat,
+        setActive: setResumeBrowserActive,
+        setHistory,
+        formatter: formatResumeBrowser,
+        maxItems: RESUME_FORMATS.length,
+        onEnter: () => {
+          const format = RESUME_FORMATS[selectedFormat].id;
+          setResumeBrowserActive(false);
+          executeCommand(`/resume ${format}`);
+        },
+        onNumberKey: (index) => {
+          const format = RESUME_FORMATS[index].id;
+          setResumeBrowserActive(false);
+          executeCommand(`/resume ${format}`);
+        }
+      })) {
+        return;
+      }
     }
     
     if (helpBrowserActive) {
@@ -302,6 +337,23 @@ export default function Terminal() {
               newHistory.pop();
             }
             newHistory.push({ type: 'output', content: helpDisplay });
+            return newHistory;
+          });
+        } else if (output === 'SHOW_RESUME_BROWSER') {
+          closeAllBrowsers();
+          setResumeBrowserActive(true);
+          setSelectedFormat(0);
+          const resumeDisplay = formatResumeBrowser(0);
+          setHistory(prev => {
+            const newHistory = [...prev];
+            while (newHistory.length > 0 && 
+                   (newHistory[newHistory.length - 1].content.includes('COMMANDS') ||
+                    newHistory[newHistory.length - 1].content.includes('MUSIC') ||
+                    newHistory[newHistory.length - 1].content.includes('WORK & PROJECTS') ||
+                    newHistory[newHistory.length - 1].content.includes('RESUME'))) {
+              newHistory.pop();
+            }
+            newHistory.push({ type: 'output', content: resumeDisplay });
             return newHistory;
           });
         } else if (output === 'SHOW_VIM_MODE') {
