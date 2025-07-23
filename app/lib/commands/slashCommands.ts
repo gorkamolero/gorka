@@ -33,7 +33,7 @@ Interests beyond code:
   • Crypto & Web3 exploration
 
 > Type /work to see projects
-> Type /ai to chat about anything
+> Or just chat directly - I'm listening
 
 > EOF
 `,
@@ -56,39 +56,42 @@ Location: Madrid / Lisbon / Remote
 > Professional inquiries welcome
 > Consulting opportunities available
 
-> Type /ai to discuss projects
-> Type /resume for full CV
+> Type /work for project details
+> Or just start chatting
 `,
 
   '/skills': () => `
 ╔═══════════════════════════════════════════╗
-║          TECHNICAL SKILLS                 ║
+║       TECH STACK & PREFERENCES            ║
 ╚═══════════════════════════════════════════╝
 
-LANGUAGES:
-  [████████████████████] TypeScript/JavaScript
-  [████████████████░░░░] Python
-  [██████████████░░░░░░] Swift
-  [████████████░░░░░░░░] C++
+PREFERRED STACK:
+  [████████████████████] Next.js (always)
+  [████████████████████] Vercel (deployment done right)
+  [████████████████████] Convex DB / PostgreSQL
+  [████████████████░░░░] Drizzle ORM
+  [██████████████████░░] Bun > Node.js
+  [████████████████████] shadcn/ui + Tailwind
 
-FRAMEWORKS:
-  [████████████████████] Next.js/React
-  [████████████████████] React Native
-  [████████████████░░░░] Node.js/Express
-  [██████████████░░░░░░] FastAPI
-  
-AI/ML:
-  [████████████████░░░░] LangChain/LlamaIndex
-  [████████████████░░░░] Transformers/Diffusers
-  [██████████████░░░░░░] PyTorch/TensorFlow
+AI/ML TOOLS:
+  [████████████████████] Vercel AI SDK
+  [████████████████░░░░] Mastra / CrewAI for agents
+  [████████████████████] Claude (Opus/Sonnet) > all
+  [██████████████░░░░░░] Grok for X/Twitter context
+  [████████████░░░░░░░░] Kimi K2 (testing)
+  [░░░░░░░░░░░░░░░░░░░░] OpenAI (if forced)
+
+DEV ENVIRONMENT:
+  [████████████████████] Claude Code (this is the way)
+  [████████████████████] Opencode + Zed Editor
+  [░░░░░░░░░░░░░░░░░░░░] Cursor/Windsurf (hard pass)
 
 CREATIVE:
   [████████████████████] Ableton Live
   [████████████████░░░░] Max/MSP
-  [██████████████░░░░░░] TouchDesigner
-  [████████████░░░░░░░░] GLSL Shaders
+  [████████████████████] Music Production
 
-> Loading additional skills...
+> Strong opinions, loosely held (but mostly strong)
 `,
 
   '/resume': () => 'SHOW_RESUME_BROWSER'
@@ -145,16 +148,18 @@ Nov 2022 - Present
 • Grew to 20K MRR in 6 months
 • Built scalable email automation platform
 
-SKILLS
-Languages: TypeScript, JavaScript, HTML/CSS, Python
-Frontend: React, Next.js, Vue.js, Web Components
-Backend: Node.js, T3 Stack, Firebase
-AI/ML: Vercel AI SDK, LangChain, OpenAI API
-Design: Figma, Webflow, Design Systems
+TECH STACK (OPINIONS INCLUDED)
+• Next.js + Vercel (the only way)
+• Convex DB / PostgreSQL + Drizzle
+• Bun > Node.js
+• shadcn/ui + Tailwind
+• Claude Code + Zed (NOT Cursor)
+• Vercel AI SDK + Mastra/CrewAI
+• Claude > Grok > Kimi > OpenAI
 
 INTERESTS
-Music Production, Chess, BJJ/Boxing, Philosophy,
-Travel, Crypto/Web3, Meditation
+X/Twitter (TPOT), Music Production, Chess (1800+),
+BJJ/Boxing, Philosophy, Crypto (builder), AI/AGI
 
 ════════════════════════════════════════════
 
@@ -185,11 +190,16 @@ Travel, Crypto/Web3, Meditation
       "period": "2018 - Present"
     }
   ],
-  "skills": {
-    "languages": ["TypeScript", "JavaScript", "Python"],
-    "frameworks": ["React", "Next.js", "Node.js"],
-    "ai_ml": ["LangChain", "Transformers", "PyTorch"],
-    "creative": ["Ableton", "Max/MSP", "TouchDesigner"]
+  "stack": [
+    "Next.js + Vercel",
+    "Convex DB / PostgreSQL",
+    "Bun > Node.js",
+    "Claude Code (NOT Cursor)"
+  ],
+  "ai_preferences": {
+    "preferred": "Claude (Opus/Sonnet)",
+    "testing": "Kimi K2",
+    "avoid": "OpenAI (if possible)"
   }
 }
 

@@ -63,40 +63,57 @@ const RESUME_DATA = {
     }
   ],
   skills: {
-    languages: ["TypeScript", "JavaScript", "HTML5/CSS3", "Python"],
-    frontend: ["React", "Next.js", "Vue.js", "Web Components", "Storybook"],
-    backend: ["Node.js", "Express", "T3 Stack", "Firebase"],
-    ai_ml: ["Vercel AI SDK", "LangChain", "OpenAI API"],
-    design: ["Figma", "Webflow", "Design Systems", "Component Libraries"],
-    creative: ["Ableton Live", "Max/MSP", "Music Production"],
-    tools: ["Git", "CI/CD", "Vercel", "GitHub/GitLab/Bitbucket"]
+    stack: [
+      "Next.js (always)",
+      "Vercel (deployment done right)", 
+      "Convex DB / PostgreSQL",
+      "Drizzle ORM",
+      "Bun > Node.js",
+      "shadcn/ui + Tailwind"
+    ],
+    ai: [
+      "Vercel AI SDK",
+      "Mastra / CrewAI for agents",
+      "Claude (Opus/Sonnet) > all",
+      "Grok for X/Twitter context",
+      "Kimi K2 (testing)",
+      "NOT OpenAI (if avoidable)"
+    ],
+    tools: [
+      "Claude Code (this is the way)",
+      "Opencode + Zed Editor",
+      "NOT Cursor/Windsurf",
+      "Git (obviously)",
+      "Vercel CI/CD"
+    ],
+    creative: ["Ableton Live", "Max/MSP", "Music Production"]
   },
   projects: [
     {
       name: "QTZL (Quetzalcoatl)",
       description: "Co-founded netlabel promoting Latin American electronic artists. Featured in Vice, Redbull Music, BBC4",
-      tech: ["Web Development", "Music Curation", "Digital Distribution"]
+      tech: ["Next.js", "Vercel", "Music Distribution"]
     },
     {
-      name: "Simply Rickshaw",
-      description: "E-commerce platform for unique global objects and original designs. Expanded from online to physical store in Madrid",
-      tech: ["E-commerce", "Web Design", "Retail"]
+      name: "Maility (20K MRR)",
+      description: "Email automation SaaS built from scratch. Scaled to 20K MRR in 6 months as technical co-founder",
+      tech: ["Next.js", "Convex DB", "Vercel AI SDK"]
     },
     {
       name: "Responsive Design Thought Leadership",
-      description: "Published articles featured in Hacker News, Awwwards, Codrops. Topics: responsive design evolution, role of web designers",
+      description: "Published articles featured in Hacker News, Awwwards, Codrops. Still relevant after years",
       tech: ["Technical Writing", "Web Standards", "Design Philosophy"]
     }
   ],
   interests: [
+    "X/Twitter (especially TPOT)",
     "Music Production & DJing",
-    "Meditation & Mindfulness",
-    "Chess",
+    "Chess (1800+ rapid)",
     "Brazilian Jiu-Jitsu & Boxing",
-    "Reading & Podcasts",
-    "Travel",
-    "Politics & Philosophy",
-    "Cryptocurrency & Web3"
+    "Philosophy & Meditation",
+    "Crypto/Web3 (builder, not trader)",
+    "AI/AGI discourse",
+    "Post-rationalist thought"
   ],
   education: [
     {
@@ -143,14 +160,19 @@ ${job.description.map(d => `• ${d}`).join('\n')}
 `;
   });
 
-  text += `\nSKILLS
-Languages: ${RESUME_DATA.skills.languages.join(', ')}
-Frontend: ${RESUME_DATA.skills.frontend.join(', ')}
-Backend: ${RESUME_DATA.skills.backend.join(', ')}
-AI/ML: ${RESUME_DATA.skills.ai_ml.join(', ')}
-Design: ${RESUME_DATA.skills.design.join(', ')}
-Creative: ${RESUME_DATA.skills.creative.join(', ')}
-Tools: ${RESUME_DATA.skills.tools.join(', ')}
+  text += `\nTECH STACK & PREFERENCES
+
+Preferred Stack:
+${RESUME_DATA.skills.stack.map(s => `• ${s}`).join('\n')}
+
+AI/ML Tools:
+${RESUME_DATA.skills.ai.map(s => `• ${s}`).join('\n')}
+
+Development Environment:
+${RESUME_DATA.skills.tools.map(s => `• ${s}`).join('\n')}
+
+Creative:
+${RESUME_DATA.skills.creative.map(s => `• ${s}`).join('\n')}
 
 PROJECTS
 `;
