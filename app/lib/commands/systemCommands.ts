@@ -40,10 +40,10 @@ export function systemCommands(command: string, args: string[]): string | null {
       return 'SHOW_VIM_MODE';
       
     case 'emacs':
-      return 'Real programmers use vim.';
+      return 'No.';
       
     case 'nano':
-      return 'This is a terminal for hackers, not journalists.';
+      return 'No.';
       
     default:
       return null;

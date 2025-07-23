@@ -11,7 +11,7 @@ interface VimModeProps {
 export default function VimMode({ isActive, initialFile = '', onClose }: VimModeProps) {
   const [mode, setMode] = useState<'normal' | 'insert' | 'command'>('normal');
   const [commandBuffer, setCommandBuffer] = useState('');
-  const [content, setContent] = useState(['']);
+  const [content, setContent] = useState(['Welcome to vim.', '', 'Press i to insert, :q to quit.', '', '']);
   const [cursor, setCursor] = useState({ line: 0, col: 0 });
   const [status, setStatus] = useState('');
   const vimRef = useRef<HTMLDivElement>(null);
@@ -48,18 +48,18 @@ export default function VimMode({ isActive, initialFile = '', onClose }: VimMode
             setCursor(prev => ({ ...prev, col: Math.max(0, prev.col - 1) }));
             break;
           case 'l':
-            setCursor(prev => ({ ...prev, col: Math.min(content[prev.line].length - 1, prev.col + 1) }));
+            setCursor(prev => ({ ...prev, col: Math.min(content[prev.line].length, prev.col + 1) }));
             break;
           case 'j':
             setCursor(prev => ({ 
               line: Math.min(content.length - 1, prev.line + 1),
-              col: Math.min(prev.col, content[Math.min(content.length - 1, prev.line + 1)].length - 1)
+              col: Math.min(prev.col, content[Math.min(content.length - 1, prev.line + 1)].length)
             }));
             break;
           case 'k':
             setCursor(prev => ({ 
               line: Math.max(0, prev.line - 1),
-              col: Math.min(prev.col, content[Math.max(0, prev.line - 1)].length - 1)
+              col: Math.min(prev.col, content[Math.max(0, prev.line - 1)].length)
             }));
             break;
           case 'o':
@@ -95,6 +95,16 @@ export default function VimMode({ isActive, initialFile = '', onClose }: VimMode
               return newContent;
             });
             setCursor(prev => ({ ...prev, col: prev.col - 1 }));
+          } else if (cursor.line > 0) {
+            // Join with previous line
+            const prevLineLength = content[cursor.line - 1].length;
+            setContent(prev => {
+              const newContent = [...prev];
+              newContent[cursor.line - 1] += newContent[cursor.line];
+              newContent.splice(cursor.line, 1);
+              return newContent;
+            });
+            setCursor({ line: cursor.line - 1, col: prevLineLength });
           }
         } else if (e.key === 'Enter') {
           setContent(prev => {
@@ -162,7 +172,7 @@ export default function VimMode({ isActive, initialFile = '', onClose }: VimMode
         </div>
 
         {/* Content area */}
-        <div className="flex-1 overflow-hidden">
+        <div className="flex-1 overflow-y-auto">
           {content.map((line, lineIndex) => (
             <div key={lineIndex} className="relative">
               <span className="text-gray-600 mr-4 select-none">
@@ -181,13 +191,16 @@ export default function VimMode({ isActive, initialFile = '', onClose }: VimMode
                     {char || ' '}
                   </span>
                 ))}
-                {lineIndex === cursor.line && cursor.col === line.length && mode === 'insert' && (
-                  <span className="bg-green-400 text-black"> </span>
+                {lineIndex === cursor.line && cursor.col === line.length && mode !== 'command' && (
+                  <span className="bg-green-400 text-black animate-pulse"> </span>
                 )}
               </span>
             </div>
           ))}
-          <div className="text-gray-600">~</div>
+          {/* Fill empty lines with ~ */}
+          {Array.from({ length: Math.max(0, 20 - content.length) }).map((_, i) => (
+            <div key={`empty-${i}`} className="text-gray-600">~</div>
+          ))}
         </div>
 
         {/* Status line */}
