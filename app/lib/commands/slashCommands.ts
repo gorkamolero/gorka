@@ -38,9 +38,9 @@ the cycle continues
 
 > Opening secure channels...
 
+Email:    gorka.molero@gmail.com
 GitHub:   github.com/gorkamolero
-Studio:   bravura.studio
-Location: Madrid / Lisbon / Remote
+Location: Madrid / Lisbon / US
 
 > Professional inquiries welcome
 > Consulting opportunities available
