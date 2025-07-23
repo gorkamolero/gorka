@@ -154,6 +154,58 @@ function TerminalContent() {
   );
 
 
+  const handleSubmit = () => {
+    if (input.trim()) {
+      const trimmedInput = input.trim();
+      
+      if (!hasInteracted) setHasInteracted(true);
+
+      if (showHistoryPrompt) {
+        setHistory(prev => [...prev, { type: 'input', content: `> ${trimmedInput}` }]);
+        
+        if (trimmedInput === '1') {
+          if (savedHistory && savedHistory.length > 0) {
+            const filteredHistory = savedHistory.filter(Boolean);
+            setHistory(filteredHistory);
+            setHistory(prev => [...prev, { type: 'output', content: '> Previous session restored.' }]);
+          }
+        } else if (trimmedInput === '2') {
+          setHistory(prev => [...prev, { type: 'output', content: '> Starting new session.' }]);
+        } else {
+          setHistory(prev => [...prev, { type: 'output', content: '> Invalid option. Please choose 1 or 2.' }]);
+          setInput('');
+          return;
+        }
+        
+        setShowHistoryPrompt(false);
+        setSavedHistory(null);
+        setInput('');
+        return;
+      }
+
+      if (showResetConfirmation) {
+        setHistory(prev => [...prev, { type: 'input', content: `> ${trimmedInput}` }]);
+        
+        if (trimmedInput.toLowerCase() === 'y' || trimmedInput.toLowerCase() === 'yes') {
+          setHistory([]);
+          setHistory(prev => [...prev, { type: 'output', content: '> Conversation history cleared.' }]);
+        } else {
+          setHistory(prev => [...prev, { type: 'output', content: '> Reset cancelled.' }]);
+        }
+        
+        setShowResetConfirmation(false);
+        setInput('');
+        return;
+      }
+
+      setHistory(prev => [...prev, { type: 'input', content: `> ${trimmedInput}` }]);
+      addCommand(trimmedInput);
+      setInput('');
+      // Execute command after state update to ensure proper order
+      setTimeout(() => executeCommand(trimmedInput), 0);
+    }
+  };
+
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (isWaitingForResponse && e.key !== 'Escape') {
       e.preventDefault();
@@ -169,55 +221,8 @@ function TerminalContent() {
     }
 
     if (e.key === 'Enter') {
-      if (input.trim()) {
-        const trimmedInput = input.trim();
-        
-        if (!hasInteracted) setHasInteracted(true);
-
-        if (showHistoryPrompt) {
-          setHistory(prev => [...prev, { type: 'input', content: `> ${trimmedInput}` }]);
-          
-          if (trimmedInput === '1') {
-            if (savedHistory && savedHistory.length > 0) {
-              const filteredHistory = savedHistory.filter(Boolean);
-              setHistory(filteredHistory);
-              setHistory(prev => [...prev, { type: 'output', content: '> Previous session restored.' }]);
-            }
-          } else if (trimmedInput === '2') {
-            setHistory(prev => [...prev, { type: 'output', content: '> Starting new session.' }]);
-          } else {
-            setHistory(prev => [...prev, { type: 'output', content: '> Invalid option. Please choose 1 or 2.' }]);
-            setInput('');
-            return;
-          }
-          
-          setShowHistoryPrompt(false);
-          setSavedHistory(null);
-          setInput('');
-          return;
-        }
-
-        if (showResetConfirmation) {
-          setHistory(prev => [...prev, { type: 'input', content: `> ${trimmedInput}` }]);
-          
-          if (trimmedInput.toLowerCase() === 'y' || trimmedInput.toLowerCase() === 'yes') {
-            setHistory([]);
-            setHistory(prev => [...prev, { type: 'output', content: '> Conversation history cleared.' }]);
-          } else {
-            setHistory(prev => [...prev, { type: 'output', content: '> Reset cancelled.' }]);
-          }
-          
-          setShowResetConfirmation(false);
-          setInput('');
-          return;
-        }
-
-        setHistory(prev => [...prev, { type: 'input', content: `> ${trimmedInput}` }]);
-        addCommand(trimmedInput);
-        setInput('');
-        // Execute command after state update to ensure proper order
-        setTimeout(() => executeCommand(trimmedInput), 0);
-      }
+      e.preventDefault();
+      handleSubmit();
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
       const command = navigateHistory('up');
@@ -263,14 +268,24 @@ function TerminalContent() {
             ))}
             
             {!isBooting && !workBrowserActive && (
-              <TerminalInput
-                ref={inputRef}
-                value={input}
-                onChange={setInput}
-                onKeyDown={handleKeyDown}
-                showPlaceholder={!hasInteracted && !showHistoryPrompt && !showResetConfirmation}
-                disabled={isWaitingForResponse}
-              />
+              <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }} className="flex items-center">
+                <TerminalInput
+                  ref={inputRef}
+                  value={input}
+                  onChange={setInput}
+                  onKeyDown={handleKeyDown}
+                  showPlaceholder={!hasInteracted && !showHistoryPrompt && !showResetConfirmation}
+                  disabled={isWaitingForResponse}
+                />
+                <button 
+                  type="submit" 
+                  className="ml-2 px-2 py-1 text-xs sm:hidden" 
+                  style={{ color: 'var(--color-primary)', border: '1px solid var(--color-primary)' }}
+                  disabled={isWaitingForResponse}
+                >
+                  Send
+                </button>
+              </form>
             )}
             
             {!isBooting && workBrowserActive && !workBrowserVisible && (
