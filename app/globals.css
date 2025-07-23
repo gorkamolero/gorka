@@ -1,7 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  /* Default theme (Matrix) colors */
+  /* Theme colors will be set dynamically by JavaScript */
+  /* Default fallbacks only */
   --color-primary: #00ff41;
   --color-secondary: #008f11;
   --color-background: #0d0208;
@@ -18,7 +19,7 @@
   --foreground: var(--color-primary);
   
   /* Glow intensity - adjust this value (0-1) to control all glow effects */
-  --glow-intensity: 0.5; /* 0 = no glow, 1 = full neon */
+  --glow-intensity: 0.3; /* 0 = no glow, 1 = full neon */
   
   /* Focus blur position */
   --focus-y: 50%;
@@ -42,13 +43,13 @@ body {
 
 /* Text selection styling */
 ::selection {
-  background: var(--color-selection);
-  color: var(--color-text);
+  background: var(--color-selection) !important;
+  color: var(--color-text) !important;
 }
 
 ::-moz-selection {
-  background: var(--color-selection);
-  color: var(--color-text);
+  background: var(--color-selection) !important;
+  color: var(--color-text) !important;
 }
 
 /* Hide scrollbar but keep functionality */
@@ -250,29 +251,27 @@ input::placeholder {
 }
 
 /* Make sure selection works in all elements */
-* {
-  &::selection {
-    background: var(--color-selection);
-    color: var(--color-text);
-  }
-  
-  &::-moz-selection {
-    background: var(--color-selection);
-    color: var(--color-text);
-  }
+*::selection {
+  background: var(--color-selection) !important;
+  color: var(--color-text) !important;
+}
+
+*::-moz-selection {
+  background: var(--color-selection) !important;
+  color: var(--color-text) !important;
 }
 
 /* Special handling for different text colors */
 .text-green-400::selection,
 .text-yellow-300::selection {
-  background: var(--color-selection);
-  color: var(--color-background);
+  background: var(--color-selection) !important;
+  color: var(--color-background) !important;
 }
 
 .text-green-400::-moz-selection,
 .text-yellow-300::-moz-selection {
-  background: var(--color-selection);
-  color: var(--color-background);
+  background: var(--color-selection) !important;
+  color: var(--color-background) !important;
 }
 
 /* Cursor blink */
@@ -366,8 +365,8 @@ input {
   height: 50vh; /* Only blur top half */
   pointer-events: none;
   z-index: 40;
-  backdrop-filter: blur(2px);
-  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(1px);
+  -webkit-backdrop-filter: blur(1px);
   mask-image: linear-gradient(to bottom, 
     black 0%, 
     transparent 100%

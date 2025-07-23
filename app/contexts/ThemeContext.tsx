@@ -19,6 +19,9 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     if (savedTheme && THEMES[savedTheme]) {
       setThemeState(savedTheme);
       applyTheme(savedTheme);
+    } else {
+      // Apply default theme on first load
+      applyTheme('original');
     }
   }, []);
 
