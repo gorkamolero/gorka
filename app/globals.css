@@ -285,7 +285,7 @@ input {
   pointer-events: none;
 }
 
-/* Focus blur effect - blur everything except bottom area */
+/* Focus blur effect - subtle blur on older content */
 .focus-blur {
   position: relative;
 }
@@ -296,23 +296,18 @@ input {
   top: 0;
   left: 0;
   right: 0;
-  height: calc(100vh - 250px); /* Keep bottom 250px clear */
+  height: 50vh; /* Only blur top half */
   pointer-events: none;
   z-index: 40;
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
   mask-image: linear-gradient(to bottom, 
     black 0%, 
-    black 60%,
     transparent 100%
   );
   -webkit-mask-image: linear-gradient(to bottom, 
     black 0%, 
-    black 60%,
     transparent 100%
   );
-  background: linear-gradient(to bottom, 
-    rgba(0, 0, 0, 0.4) 0%, 
-    transparent 100%
-  );
+  opacity: 0.5; /* Make it even more subtle */
 }

@@ -15,61 +15,21 @@ interface Project {
 
 const PROJECTS: Project[] = [
   {
-    name: 'The Pulse',
-    brief: 'Non-linear storytelling engine',
-    description: [
-      'Inspired by Lovecraft\'s "Shadow Over Innsmouth"',
-      'Separates narrative structure from sequential plot',
-      'Voice dictation + AI-generated imagery',
-      'Built, fantastic, underappreciated'
-    ],
-    tech: 'TypeScript, React, AI/ML',
-    link: 'thepulse.app',
-    github: 'github.com/gorkamolero/the-pulse',
-    image: '/images/the-pulse.png'
-  },
-  {
-    name: 'Sanskrit Tantra Translations',
-    brief: 'First English translations of sacred texts',
-    description: [
-      'Texts like Matangi Mahavidya',
-      'Gemini 2.5 Pro for OCR',
-      'Claude for assembly',
-      'Ongoing sacred work'
-    ],
-    tech: 'AI-powered translation pipeline',
-    github: 'github.com/gorkamolero/tantras',
-    image: '/images/tantras.png'
-  },
-  {
-    name: '777 Radio',
-    brief: '24-hour radio with story burning',
-    description: [
-      'Music interrupted by dark stories',
-      'Submit stories to burn in Matangi\'s pile',
-      'Cathartic release through frequency',
-      'Where darkness meets sound'
-    ],
-    tech: 'Streaming architecture, story system',
-    link: '777leftoversquawk.com',
-    image: '/images/777-radio.gif'
-  },
-  {
     name: 'Degens in Space',
     brief: 'Blockchain-generated universe game',
     description: [
-      'DMT (Digital Matter Theory) creates assets',
-      'Turn-based combat like old Pokémon',
-      'Galaxy exploration + planet defense',
-      'Possibly my best work'
+      'Bitcoin L1 RPG powered by DMT-Unats',
+      'Turn-based PvP combat like old Pokémon',
+      'Multiple species with unique abilities',
+      'The blockchain shapes the universe'
     ],
-    tech: 'Blockchain, AI missions, procedural gen',
+    tech: 'Blockchain, procedural generation, game design',
     link: 'degens.space',
     image: '/images/degens.gif'
   },
   {
-    name: 'CyberTantra',
-    brief: 'AI guru from 200+ hours of philosophy',
+    name: 'Cybertantra',
+    brief: 'Cyber-guru trained on 100+ hours of material',
     description: [
       'RTT Yoga School teachings',
       'Nietzsche-style philosopher',
@@ -91,6 +51,45 @@ const PROJECTS: Project[] = [
     ],
     tech: 'Ableton, synthesis, production',
     image: '/images/music-production.gif'
+  },
+  {
+    name: 'The Pulse',
+    brief: 'Non-linear storytelling engine',
+    description: [
+      'Inspired by Lovecraft\'s "Shadow Over Innsmouth"',
+      'Separates narrative structure from sequential plot',
+      'Voice dictation + AI-generated imagery',
+      'Built, fantastic, underappreciated'
+    ],
+    tech: 'TypeScript, React, AI/ML',
+    link: 'thepulse.app',
+    github: 'github.com/gorkamolero/the-pulse',
+    image: '/images/the-pulse.png'
+  },
+  {
+    name: 'Translation Platform',
+    brief: 'AI-powered translation tools',
+    description: [
+      'Multi-language support',
+      'Context-aware translations',
+      'Technical documentation focus',
+      'Private deployment'
+    ],
+    tech: 'GPT-4, Next.js, i18n',
+    image: '/images/translation.png'
+  },
+  {
+    name: '777 Leftover Squawk',
+    brief: '24-hour radio created as bhakti to Matangi',
+    description: [
+      'Music interrupted by dark stories',
+      'Submit stories to burn in Matangi\'s pile',
+      'Cathartic release through frequency',
+      'Where darkness meets sound'
+    ],
+    tech: 'Streaming architecture, story system',
+    link: '777leftoversquawk.vercel.app',
+    image: '/images/777-radio.gif'
   }
 ];
 
