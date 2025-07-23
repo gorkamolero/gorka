@@ -18,10 +18,11 @@ const PROJECTS: Project[] = [
     name: 'Degens in Space',
     brief: 'Blockchain-generated universe game',
     description: [
-      'Bitcoin L1 RPG powered by DMT-Unats',
-      'Turn-based PvP combat like old Pokémon',
-      'Multiple species with unique abilities',
-      'The blockchain shapes the universe'
+      'bitcoin rpg that shouldn\'t work but does',
+      'turn-based pvp like classic pokémon',
+      'multiple species, procedural universe',
+      'the blockchain literally shapes reality',
+      'play at degens.space'
     ],
     tech: 'Blockchain, procedural generation, game design',
     link: 'degens.space',
@@ -57,10 +58,11 @@ const PROJECTS: Project[] = [
     name: 'The Pulse',
     brief: 'Non-linear storytelling engine',
     description: [
-      'Inspired by Lovecraft\'s "Shadow Over Innsmouth"',
-      'Separates narrative structure from sequential plot',
-      'Voice dictation + AI-generated imagery',
-      'Built, fantastic, underappreciated'
+      'non-linear story engine',
+      'separates structure from plot',
+      'shadow over innsmouth was the test case',
+      'voice dictation + generated imagery',
+      'best thing i built that no one uses'
     ],
     tech: 'TypeScript, React, AI/ML',
     link: 'thepulse.app',

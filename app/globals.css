@@ -40,6 +40,17 @@ body {
   overflow: hidden;
 }
 
+/* Text selection styling */
+::selection {
+  background: var(--color-selection);
+  color: var(--color-text);
+}
+
+::-moz-selection {
+  background: var(--color-selection);
+  color: var(--color-text);
+}
+
 /* Hide scrollbar but keep functionality */
 .scrollbar-hide {
   -ms-overflow-style: none;
@@ -236,6 +247,32 @@ body {
 input::placeholder {
   color: var(--color-secondary);
   opacity: 0.7;
+}
+
+/* Make sure selection works in all elements */
+* {
+  &::selection {
+    background: var(--color-selection);
+    color: var(--color-text);
+  }
+  
+  &::-moz-selection {
+    background: var(--color-selection);
+    color: var(--color-text);
+  }
+}
+
+/* Special handling for different text colors */
+.text-green-400::selection,
+.text-yellow-300::selection {
+  background: var(--color-selection);
+  color: var(--color-background);
+}
+
+.text-green-400::-moz-selection,
+.text-yellow-300::-moz-selection {
+  background: var(--color-selection);
+  color: var(--color-background);
 }
 
 /* Cursor blink */

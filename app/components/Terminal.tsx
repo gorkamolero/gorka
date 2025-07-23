@@ -365,10 +365,9 @@ export default function Terminal() {
           const musicDisplay = formatMusicPlayer(0);
           setHistory(prev => {
             const newHistory = [...prev];
+            // Remove any existing browser displays (those with box characters ╔═══)
             while (newHistory.length > 0 && 
-                   (newHistory[newHistory.length - 1].content.includes('COMMANDS') ||
-                    newHistory[newHistory.length - 1].content.includes('MUSIC') ||
-                    newHistory[newHistory.length - 1].content.includes('WORK & PROJECTS'))) {
+                   newHistory[newHistory.length - 1].content.includes('╔═══')) {
               newHistory.pop();
             }
             newHistory.push({ type: 'output', content: musicDisplay });
@@ -381,10 +380,9 @@ export default function Terminal() {
           const workDisplay = formatWorkBrowser(0, false);
           setHistory(prev => {
             const newHistory = [...prev];
+            // Remove any existing browser displays (those with box characters ╔═══)
             while (newHistory.length > 0 && 
-                   (newHistory[newHistory.length - 1].content.includes('COMMANDS') ||
-                    newHistory[newHistory.length - 1].content.includes('MUSIC') ||
-                    newHistory[newHistory.length - 1].content.includes('WORK & PROJECTS'))) {
+                   newHistory[newHistory.length - 1].content.includes('╔═══')) {
               newHistory.pop();
             }
             newHistory.push({ type: 'output', content: workDisplay });
@@ -397,10 +395,9 @@ export default function Terminal() {
           const helpDisplay = formatHelpBrowser(0);
           setHistory(prev => {
             const newHistory = [...prev];
+            // Remove any existing browser displays (those with box characters ╔═══)
             while (newHistory.length > 0 && 
-                   (newHistory[newHistory.length - 1].content.includes('COMMANDS') ||
-                    newHistory[newHistory.length - 1].content.includes('MUSIC') ||
-                    newHistory[newHistory.length - 1].content.includes('WORK & PROJECTS'))) {
+                   newHistory[newHistory.length - 1].content.includes('╔═══')) {
               newHistory.pop();
             }
             newHistory.push({ type: 'output', content: helpDisplay });
@@ -413,11 +410,9 @@ export default function Terminal() {
           const resumeDisplay = formatResumeBrowser(0);
           setHistory(prev => {
             const newHistory = [...prev];
+            // Remove any existing browser displays (those with box characters ╔═══)
             while (newHistory.length > 0 && 
-                   (newHistory[newHistory.length - 1].content.includes('COMMANDS') ||
-                    newHistory[newHistory.length - 1].content.includes('MUSIC') ||
-                    newHistory[newHistory.length - 1].content.includes('WORK & PROJECTS') ||
-                    newHistory[newHistory.length - 1].content.includes('RESUME'))) {
+                   newHistory[newHistory.length - 1].content.includes('╔═══')) {
               newHistory.pop();
             }
             newHistory.push({ type: 'output', content: resumeDisplay });
@@ -434,11 +429,9 @@ export default function Terminal() {
           const themeDisplay = formatThemeBrowser(0);
           setHistory(prev => {
             const newHistory = [...prev];
+            // Remove any existing browser displays (those with box characters ╔═══)
             while (newHistory.length > 0 && 
-                   (newHistory[newHistory.length - 1].content.includes('THEMES') ||
-                    newHistory[newHistory.length - 1].content.includes('COMMANDS') ||
-                    newHistory[newHistory.length - 1].content.includes('MUSIC') ||
-                    newHistory[newHistory.length - 1].content.includes('WORK & PROJECTS'))) {
+                   newHistory[newHistory.length - 1].content.includes('╔═══')) {
               newHistory.pop();
             }
             newHistory.push({ type: 'output', content: themeDisplay });
