@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, KeyboardEvent } from 'react';
+import { useEffect, useRef, KeyboardEvent, useCallback } from 'react';
 import { useBootSequence } from '../hooks/useBootSequence';
 import { useCommandHistory } from '../hooks/useCommandHistory';
 import { useGeolocation } from '../hooks/useGeolocation';
@@ -31,6 +31,8 @@ function TerminalContent() {
     selectedProject,
     vimModeActive, setVimModeActive,
     showResetConfirmation, setShowResetConfirmation,
+    showHistoryPrompt, setShowHistoryPrompt,
+    savedHistory, setSavedHistory,
     closeAllBrowsers
   } = useTerminalContext();
   
@@ -39,7 +41,21 @@ function TerminalContent() {
   
   const userCity = useGeolocation();
   
-  const { history, setHistory, isBooting, showCursor } = useBootSequence(userCity);
+  const handleBootComplete = useCallback(async (hasHistory: boolean) => {
+    if (hasHistory) {
+      setShowHistoryPrompt(true);
+      try {
+        const savedConversation = await conversationStorage.loadConversation();
+        // Filter out any undefined entries
+        const filteredConversation = savedConversation?.filter(Boolean) || null;
+        setSavedHistory(filteredConversation);
+      } catch (error) {
+        console.error('Failed to load conversation history:', error);
+      }
+    }
+  }, [setShowHistoryPrompt, setSavedHistory]);
+  
+  const { history, setHistory, isBooting, showCursor } = useBootSequence(userCity, handleBootComplete);
   const { addCommand, navigateHistory } = useCommandHistory();
   const { setTheme } = useTheme();
   
@@ -78,10 +94,8 @@ function TerminalContent() {
 
   const { executeCommand, replaceLastHistory } = useCommandExecutor(setHistory, setTheme, sendMessage);
 
-  // Save conversation history when it changes (only in production)
+  // Save conversation history when it changes
   useEffect(() => {
-    if (process.env.NODE_ENV !== 'production') return;
-    
     const saveHistory = async () => {
       if (history.length > 0 && !isBooting) {
         try {
@@ -171,6 +185,33 @@ function TerminalContent() {
         
         if (!hasInteracted) setHasInteracted(true);
 
+        // Handle history prompt
+        if (showHistoryPrompt) {
+          setHistory(prev => [...prev, { type: 'input', content: `> ${trimmedInput}` }]);
+          
+          if (trimmedInput === '1') {
+            // Restore previous session
+            if (savedHistory && savedHistory.length > 0) {
+              // Filter out any undefined entries before restoring
+              const filteredHistory = savedHistory.filter(Boolean);
+              setHistory(filteredHistory);
+              setHistory(prev => [...prev, { type: 'output', content: '> Previous session restored.' }]);
+            }
+          } else if (trimmedInput === '2') {
+            // Start new session
+            setHistory(prev => [...prev, { type: 'output', content: '> Starting new session.' }]);
+          } else {
+            setHistory(prev => [...prev, { type: 'output', content: '> Invalid option. Please choose 1 or 2.' }]);
+            setInput('');
+            return;
+          }
+          
+          setShowHistoryPrompt(false);
+          setSavedHistory(null);
+          setInput('');
+          return;
+        }
+
         // Handle reset confirmation
         if (showResetConfirmation) {
           setHistory(prev => [...prev, { type: 'input', content: `> ${trimmedInput}` }]);
@@ -178,9 +219,7 @@ function TerminalContent() {
           if (trimmedInput.toLowerCase() === 'y' || trimmedInput.toLowerCase() === 'yes') {
             // Clear conversation history
             setHistory([]);
-            if (process.env.NODE_ENV === 'production') {
-              conversationStorage.clearConversation().catch(console.error);
-            }
+            conversationStorage.clearConversation().catch(console.error);
             setHistory(prev => [...prev, { type: 'output', content: '> Conversation history cleared.' }]);
           } else {
             setHistory(prev => [...prev, { type: 'output', content: '> Reset cancelled.' }]);
@@ -226,7 +265,7 @@ function TerminalContent() {
             )}
 
             {/* Terminal history */}
-            {!showCursor && history.map((entry, index) => (
+            {!showCursor && history.filter(Boolean).map((entry, index) => (
               <div 
                 key={index}
                 className={clsx(
@@ -249,9 +288,25 @@ function TerminalContent() {
                 value={input}
                 onChange={setInput}
                 onKeyDown={handleKeyDown}
-                showPlaceholder={!hasInteracted && !showResetConfirmation}
+                showPlaceholder={!hasInteracted && !showHistoryPrompt && !showResetConfirmation}
                 disabled={isWaitingForResponse}
               />
+            )}
+            
+            {/* Hidden focusable element for work browser navigation */}
+            {!isBooting && workBrowserActive && !workBrowserVisible && (
+              <div className="flex items-center text-yellow-300">
+                <span className="mr-2">{'>'}</span>
+                <input
+                  ref={inputRef}
+                  type="text"
+                  className="flex-1 bg-transparent outline-none text-yellow-300 caret-transparent"
+                  onKeyDown={handleKeyDown}
+                  value=""
+                  readOnly
+                  autoFocus
+                />
+              </div>
             )}
         </div>
       </div>

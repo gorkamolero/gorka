@@ -278,7 +278,7 @@ ${project.description.map(line => `  ${line}`).join('\n')}
   });
   
   display += `
-> [↑/↓ or j/k] Navigate | [Enter] View details | [q] Exit`;
+> [↑/↓ or j/k] Navigate | [Enter] View details | [q/Esc] Exit`;
   
   return display;
 }
