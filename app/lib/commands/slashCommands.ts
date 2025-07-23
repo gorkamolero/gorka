@@ -60,18 +60,25 @@ Location: Madrid, Spain
 LANGUAGES:
   [████████████████████] TypeScript/JavaScript
   [████████████████░░░░] Python
-  [██████████████░░░░░░] Rust
-  [████████████░░░░░░░░] Go
+  [██████████████░░░░░░] Swift
+  [████████████░░░░░░░░] C++
 
 FRAMEWORKS:
   [████████████████████] Next.js/React
-  [████████████████░░░░] Node.js
+  [████████████████████] React Native
+  [████████████████░░░░] Node.js/Express
   [██████████████░░░░░░] FastAPI
   
 AI/ML:
-  [████████████████░░░░] LangChain
-  [████████████████░░░░] Transformers
-  [██████████████░░░░░░] PyTorch
+  [████████████████░░░░] LangChain/LlamaIndex
+  [████████████████░░░░] Transformers/Diffusers
+  [██████████████░░░░░░] PyTorch/TensorFlow
+
+CREATIVE:
+  [████████████████████] Ableton Live
+  [████████████████░░░░] Max/MSP
+  [██████████████░░░░░░] TouchDesigner
+  [████████████░░░░░░░░] GLSL Shaders
 
 > Loading additional skills...
 `,
@@ -113,67 +120,101 @@ export function slashCommands(command: string, args: string[]): string {
     switch (format) {
       case 'pdf':
         return `
-> Initiating download: gorka_resume_2024.pdf
-> Size: 127KB
-> Transfer complete.
+> Initiating download: gorka_molero_resume.pdf
+> Format: PDF (Professional Layout)
 
-[!] Check your downloads folder
-[!] If download didn't start, refresh and try again
+[!] PDF generation in progress...
+[!] For now, try: /resume txt or /resume json
 `;
       case 'txt':
         return `
 > Generating plain text resume...
-> Formatting complete.
+> Accessing /api/resume?format=txt...
 
 ════════════════════════════════════════════
 
 GORKA MOLERO
-Digital Alchemist | Senior Full-Stack Engineer
+Senior Full-Stack Engineer & Digital Creator
+Madrid, Spain
 
-[Contact]
-Location: Madrid, Spain
+CONTACT
 GitHub: github.com/gorkamolero
 Studio: bravura.studio
 
-[Current Manifestations]
-• Senior UI Engineer - Corporate Realm
-• Music Producer - QTZL Collective  
-• AI Explorer - Various Experiments
+SUMMARY
+Senior Full-Stack Engineer with 10+ years crafting
+digital experiences at the intersection of technology
+and creativity. Specialized in modern web technologies,
+AI/ML integration, and creative coding.
 
-[Technical Arsenal]
-• Languages: TypeScript, JavaScript, Python
-• Frameworks: React, Next.js, Node.js
-• AI/ML: LangChain, Transformers, LLMs
-• Music: Ableton, Max/MSP, AI Synthesis
+EXPERIENCE
+
+Senior UI Engineer | Current Company
+2022 - Present
+• Lead frontend architecture for enterprise applications
+• Implement AI-powered features using LangChain
+• Mentor junior developers and establish standards
+• Optimize performance (40% faster load times)
+
+Full-Stack Developer | Previous Company  
+2019 - 2022
+• Built real-time collaborative platforms
+• Developed microservices architecture
+• Integrated ML models for user behavior analysis
+• Led migration from legacy systems
+
+Creative Technologist | Bravura Studio
+2018 - Present
+• Develop interactive installations
+• Create generative music systems
+• Design creative coding workshops
+• Collaborate with artists on digital projects
+
+SKILLS
+Languages: TypeScript, JavaScript, Python, Swift, C++
+Frontend: React, Next.js, React Native, Three.js, WebGL
+Backend: Node.js, Express, FastAPI, PostgreSQL, Redis
+AI/ML: LangChain, Transformers, PyTorch, OpenAI API
+Creative: Ableton Live, Max/MSP, TouchDesigner, GLSL
 
 ════════════════════════════════════════════
 
-> Copy the text above or type /resume pdf for formatted version
+> Full resume: curl ${typeof window !== 'undefined' ? window.location.origin : ''}/api/resume?format=txt
 `;
       case 'json':
         return `
 > Exporting resume data as JSON...
+> Accessing /api/resume?format=json...
 
 {
   "name": "Gorka Molero",
-  "title": "Digital Alchemist | Senior Full-Stack Engineer",
+  "title": "Senior Full-Stack Engineer & Digital Creator",
   "location": "Madrid, Spain",
-  "github": "github.com/gorkamolero",
-  "studio": "bravura.studio",
-  "realms": [
-    "Full-Stack Engineering",
-    "Music Production",
-    "AI Experimentation"
+  "contact": {
+    "github": "github.com/gorkamolero",
+    "studio": "bravura.studio"
+  },
+  "experience": [
+    {
+      "title": "Senior UI Engineer",
+      "company": "Current Company",
+      "period": "2022 - Present"
+    },
+    {
+      "title": "Creative Technologist",
+      "company": "Bravura Studio",
+      "period": "2018 - Present"
+    }
   ],
   "skills": {
     "languages": ["TypeScript", "JavaScript", "Python"],
     "frameworks": ["React", "Next.js", "Node.js"],
-    "ai": ["LangChain", "Transformers", "LLMs"],
-    "music": ["Ableton", "Max/MSP", "AI Synthesis"]
+    "ai_ml": ["LangChain", "Transformers", "PyTorch"],
+    "creative": ["Ableton", "Max/MSP", "TouchDesigner"]
   }
 }
 
-> Full JSON available at /api/resume
+> Full JSON: curl ${typeof window !== 'undefined' ? window.location.origin : ''}/api/resume
 `;
       default:
         return `Unknown format: ${format}\nAvailable formats: pdf, txt, json`;

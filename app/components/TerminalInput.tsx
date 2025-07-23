@@ -7,10 +7,11 @@ interface TerminalInputProps {
   onChange: (value: string) => void;
   onKeyDown: (e: KeyboardEvent<HTMLInputElement>) => void;
   showPlaceholder?: boolean;
+  disabled?: boolean;
 }
 
 const TerminalInput = forwardRef<HTMLInputElement, TerminalInputProps>(
-  ({ value, onChange, onKeyDown, showPlaceholder = false }, ref) => {
+  ({ value, onChange, onKeyDown, showPlaceholder = false, disabled = false }, ref) => {
     return (
       <div className="flex items-center">
         <span className="mr-2 text-yellow-300">{'>'}</span>
@@ -27,9 +28,17 @@ const TerminalInput = forwardRef<HTMLInputElement, TerminalInputProps>(
             autoCorrect="off"
             autoCapitalize="off"
             spellCheck={false}
+            disabled={disabled}
           />
           <span className="absolute top-0 pointer-events-none text-green-400" style={{ left: `${value.length}ch` }}>
-            <span className="inline-block w-2 h-5 bg-green-400 animate-pulse"></span>
+            {disabled ? (
+              <span className="inline-block">
+                <span className="inline-block mr-1">...</span>
+                <span className="inline-block animate-pulse">thinking</span>
+              </span>
+            ) : (
+              <span className="inline-block w-2 h-5 bg-green-400 animate-pulse"></span>
+            )}
           </span>
         </div>
       </div>

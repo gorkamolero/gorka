@@ -52,6 +52,7 @@ export default function Terminal() {
   const { handleShortcut } = useKeyboardShortcuts({ input, setInput, setHistory, inputRef, closeAllBrowsers });
   
   const streamingIndexRef = useRef<number | null>(null);
+  const [isWaitingForResponse, setIsWaitingForResponse] = useState(false);
   
   const { sendMessage } = useTerminalAI({
     onMessage: (content, isAI) => {
@@ -74,8 +75,10 @@ export default function Terminal() {
       }
     },
     onLoading: (loading) => {
+      setIsWaitingForResponse(loading);
       if (!loading) {
         streamingIndexRef.current = null;
+        setTimeout(() => inputRef.current?.focus(), 100);
       }
     }
   });
@@ -143,6 +146,12 @@ export default function Terminal() {
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    // Prevent input while waiting for AI response
+    if (isWaitingForResponse && e.key !== 'Escape') {
+      e.preventDefault();
+      return;
+    }
+    
     if (helpBrowserActive) {
       if (handleBrowserNavigation({
         e,
@@ -348,6 +357,7 @@ export default function Terminal() {
               onChange={setInput}
               onKeyDown={handleKeyDown}
               showPlaceholder={!hasInteracted}
+              disabled={isWaitingForResponse}
             />
           )}
         </div>
