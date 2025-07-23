@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 interface UseTerminalAIProps {
   onMessage: (content: string, isAI: boolean) => void;
