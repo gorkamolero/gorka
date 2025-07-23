@@ -150,18 +150,22 @@ function TerminalContent() {
   }, []);
 
 
+  // Focus input after boot completes
   useEffect(() => {
-    if (!isBooting) {
+    if (!isBooting && !workBrowserActive) {
       setTimeout(() => inputRef.current?.focus(), 100);
     }
-  }, [isBooting]);
+  }, [isBooting, workBrowserActive]);
 
   const { handleNavigation } = useTerminalNavigation(
     setHistory,
     executeCommand,
     replaceLastHistory,
-    setTheme
+    setTheme,
+    inputRef,
+    isBooting
   );
+
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     // Prevent input while waiting for AI response
@@ -305,6 +309,12 @@ function TerminalContent() {
                   value=""
                   readOnly
                   autoFocus
+                  onBlur={(e) => {
+                    // Refocus if blur wasn't intentional (e.g., clicking elsewhere)
+                    if (!e.relatedTarget) {
+                      setTimeout(() => e.target.focus(), 0);
+                    }
+                  }}
                 />
               </div>
             )}

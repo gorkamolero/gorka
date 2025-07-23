@@ -1,4 +1,4 @@
-import { KeyboardEvent } from 'react';
+import { KeyboardEvent, useEffect, RefObject } from 'react';
 import { handleBrowserNavigation } from '../lib/terminal/browserHandlers';
 import { formatWorkBrowser, PROJECTS } from '../components/WorkBrowser';
 import { formatHelpBrowser } from '../components/HelpBrowser';
@@ -20,7 +20,9 @@ export function useTerminalNavigation(
   setHistory: (fn: (prev: HistoryEntry[]) => HistoryEntry[]) => void,
   executeCommand: (command: string) => void,
   replaceLastHistory: (content: string) => void,
-  setTheme: (theme: Theme) => void
+  setTheme: (theme: Theme) => void,
+  inputRef?: RefObject<HTMLInputElement | null>,
+  isBooting?: boolean
 ) {
   const {
     themeBrowserActive,
@@ -45,8 +47,42 @@ export function useTerminalNavigation(
     setWorkBrowserVisible,
     setSelectedTrack,
     setMusicPlayerActive,
-    setMusicPlayerVisible
+    setMusicPlayerVisible,
+    musicPlayerVisible,
+    vimModeActive
   } = useTerminalContext();
+
+  // Focus management - ensure input always has focus when available
+  useEffect(() => {
+    const focusInput = () => {
+      if (!isBooting && !workBrowserActive && inputRef?.current) {
+        inputRef.current.focus();
+      }
+    };
+
+    // Focus on mount and when states change
+    focusInput();
+
+    // Refocus input on any keydown when no special browser is active
+    const handleGlobalKeyDown = () => {
+      // Don't interfere with music player when it has focus
+      if (musicPlayerVisible) return;
+      
+      // If work browser overlay is visible, let it handle keys
+      if (workBrowserVisible) return;
+      
+      // If vim mode is active, let it handle keys
+      if (vimModeActive) return;
+      
+      // Otherwise, ensure input has focus
+      if (!isBooting && !workBrowserActive) {
+        focusInput();
+      }
+    };
+
+    window.addEventListener('keydown', handleGlobalKeyDown);
+    return () => window.removeEventListener('keydown', handleGlobalKeyDown);
+  }, [isBooting, workBrowserActive, musicPlayerVisible, workBrowserVisible, vimModeActive, inputRef]);
 
   const handleNavigation = (e: KeyboardEvent<HTMLInputElement>): boolean => {
     // Theme browser navigation
