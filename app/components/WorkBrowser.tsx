@@ -67,7 +67,7 @@ const PROJECTS: Project[] = [
     tech: 'TypeScript, React, AI/ML',
     link: 'thepulse.app',
     github: 'github.com/gorkamolero/the-pulse',
-    image: '/images/the-pulse.png'
+    image: '/images/The Pulse.jpeg'
   },
   {
     name: 'Codex',
@@ -197,10 +197,10 @@ export default function WorkBrowser({ isActive, selectedProject, onClose, setHis
 
   return (
     <>
-      {/* Project Preview Image - always show when WorkBrowser is active */}
-      <div className="fixed top-20 right-10 z-50 border-2 border-green-400 bg-black p-2 shadow-2xl">
-        <div className="relative w-80 h-60 bg-black">
-          {project.image ? (
+      {/* Project Preview Image - only show when project has an image */}
+      {project.image && (
+        <div className="fixed top-20 right-10 z-50 border-2 border-green-400 bg-black p-2 shadow-2xl">
+          <div className="relative w-80 h-60 bg-black">
             <Image
               src={project.image}
               alt={project.name}
@@ -208,16 +208,12 @@ export default function WorkBrowser({ isActive, selectedProject, onClose, setHis
               className="object-cover pixelated"
               unoptimized={project.image.endsWith('.gif')}
             />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center text-green-400">
-              <span className="text-4xl font-mono">[NO PREVIEW]</span>
-            </div>
-          )}
+          </div>
+          <div className="mt-2 text-green-400 text-xs font-mono text-center">
+            {project.name}
+          </div>
         </div>
-        <div className="mt-2 text-green-400 text-xs font-mono text-center">
-          {project.name}
-        </div>
-      </div>
+      )}
     </>
   );
 }
