@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef, KeyboardEvent } from 'react';
+import { useState, useEffect, useRef, KeyboardEvent, useCallback } from 'react';
 import { handleCommand } from '../lib/commands';
 import { useBootSequence } from '../hooks/useBootSequence';
 import { useCommandHistory } from '../hooks/useCommandHistory';
@@ -51,7 +51,7 @@ export default function Terminal() {
   
   const userCity = useGeolocation();
   
-  const handleBootComplete = async (hasHistory: boolean) => {
+  const handleBootComplete = useCallback(async (hasHistory: boolean) => {
     if (hasHistory) {
       setShowHistoryPrompt(true);
       try {
@@ -61,7 +61,7 @@ export default function Terminal() {
         console.error('Failed to load conversation history:', error);
       }
     }
-  };
+  }, []);
   
   const { history, setHistory, isBooting, showCursor } = useBootSequence(userCity, handleBootComplete);
   const { addCommand, navigateHistory } = useCommandHistory();
