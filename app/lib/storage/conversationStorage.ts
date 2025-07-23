@@ -82,7 +82,7 @@ class ConversationStorage {
       request.onsuccess = () => {
         const result = request.result as StoredConversation | undefined;
         if (result) {
-          resolve(result.messages.map(({ timestamp, ...msg }) => msg));
+          resolve(result.messages.map(({ timestamp: _, ...msg }) => msg));
         } else {
           resolve(null);
         }

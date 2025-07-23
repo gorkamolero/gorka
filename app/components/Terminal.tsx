@@ -42,7 +42,6 @@ export default function Terminal() {
   const [vimModeActive, setVimModeActive] = useState(false);
   const [themeBrowserActive, setThemeBrowserActive] = useState(false);
   const [selectedTheme, setSelectedTheme] = useState(0);
-  const [showThemeSpinner, setShowThemeSpinner] = useState(false);
   const [showResetConfirmation, setShowResetConfirmation] = useState(false);
   const [showHistoryPrompt, setShowHistoryPrompt] = useState(false);
   const [savedHistory, setSavedHistory] = useState<Array<{ type: 'input' | 'output'; content: string; typewriter?: boolean }> | null>(null);
@@ -65,7 +64,7 @@ export default function Terminal() {
   
   const { history, setHistory, isBooting, showCursor } = useBootSequence(userCity, handleBootComplete);
   const { addCommand, navigateHistory } = useCommandHistory();
-  const { theme, setTheme } = useTheme();
+  const { setTheme } = useTheme();
   
   const closeAllBrowsers = () => {
     setHelpBrowserActive(false);
