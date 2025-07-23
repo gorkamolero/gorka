@@ -7,7 +7,7 @@ import { formatThemeBrowser, THEME_LIST } from '../components/ThemeBrowser';
 import { formatMusicPlayer } from '../lib/terminal/formatters';
 import { ALL_COMMANDS } from '../lib/commands/availableCommands';
 import { MUSIC_TRACKS } from '../lib/constants/music';
-import { THEMES, Theme } from '../lib/themes';
+import { THEMES, Theme } from '../lib/constants/themes';
 import { useTerminalContext } from '../contexts/TerminalContext';
 
 type HistoryEntry = {

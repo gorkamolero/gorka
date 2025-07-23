@@ -1,4 +1,4 @@
-import { THEMES, Theme } from '../lib/themes';
+import { THEMES, Theme } from '../lib/constants/themes';
 
 export function formatThemeBrowser(selected: number): string {
   const entries = Object.entries(THEMES);

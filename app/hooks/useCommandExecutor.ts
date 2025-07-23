@@ -4,7 +4,7 @@ import { formatHelpBrowser } from '../components/HelpBrowser';
 import { formatResumeBrowser } from '../components/ResumeBrowser';
 import { formatThemeBrowser } from '../components/ThemeBrowser';
 import { formatMusicPlayer } from '../lib/terminal/formatters';
-import { THEMES, Theme } from '../lib/themes';
+import { THEMES, Theme } from '../lib/constants/themes';
 import { useTerminalContext } from '../contexts/TerminalContext';
 
 type HistoryEntry = {
