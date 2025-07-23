@@ -36,7 +36,7 @@ function TerminalLine({ entry }: { entry: HistoryEntry }) {
       const timeout = setTimeout(() => {
         setDisplayedText(prev => prev + entry.content[currentIndex]);
         setCurrentIndex(prev => prev + 1);
-      }, 10);
+      }, 30); // Slower, more visible character-by-character
       
       return () => clearTimeout(timeout);
     }

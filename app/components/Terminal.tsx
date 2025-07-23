@@ -390,32 +390,32 @@ export default function Terminal() {
       >
         <div 
           ref={terminalRef}
-          className="h-[calc(100vh-1rem)] sm:h-[calc(100vh-2rem)] overflow-y-auto scrollbar-hide"
+          className="h-[calc(100vh-1rem)] sm:h-[calc(100vh-2rem)] overflow-y-auto scrollbar-hide focus-blur"
         >
-          {/* Boot sequence with blinking cursor */}
-          {isBooting && showCursor && (
-            <div className="flex items-center">
-              <span className="mr-2">{'>'}</span>
-              <span className="inline-block w-2 h-5 bg-green-400 animate-pulse"></span>
-            </div>
-          )}
+            {/* Boot sequence with blinking cursor */}
+            {isBooting && showCursor && (
+              <div className="flex items-center">
+                <span className="mr-2">{'>'}</span>
+                <span className="inline-block w-2 h-5 bg-green-400 animate-pulse"></span>
+              </div>
+            )}
 
-          {/* Terminal history */}
-          {!showCursor && (
-            <TerminalHistory history={history} />
-          )}
-          
-          {/* Input line */}
-          {!isBooting && (
-            <TerminalInput
-              ref={inputRef}
-              value={input}
-              onChange={setInput}
-              onKeyDown={handleKeyDown}
-              showPlaceholder={!hasInteracted}
-              disabled={isWaitingForResponse}
-            />
-          )}
+            {/* Terminal history */}
+            {!showCursor && (
+              <TerminalHistory history={history} />
+            )}
+            
+            {/* Input line */}
+            {!isBooting && (
+              <TerminalInput
+                ref={inputRef}
+                value={input}
+                onChange={setInput}
+                onKeyDown={handleKeyDown}
+                showPlaceholder={!hasInteracted}
+                disabled={isWaitingForResponse}
+              />
+            )}
         </div>
       </div>
       
