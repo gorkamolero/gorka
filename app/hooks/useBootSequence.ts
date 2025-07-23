@@ -66,11 +66,6 @@ export function useBootSequence(userCity: string, onBootComplete?: (hasHistory: 
       try {
         savedConversation = await conversationStorage.loadConversation();
         hasHistory = !!(savedConversation && savedConversation.length > 0);
-        console.log('[BootSequence] Loaded conversation:', { 
-          hasHistory, 
-          conversationLength: savedConversation?.length,
-          isProduction: process.env.NODE_ENV === 'production'
-        });
       } catch (error) {
         console.error('Failed to load conversation history:', error);
       }
@@ -107,15 +102,12 @@ export function useBootSequence(userCity: string, onBootComplete?: (hasHistory: 
         // Development: automatically restore
         // Replace the boot messages with the saved conversation
         const filteredHistory = savedConversation.filter(Boolean);
-        console.log('[BootSequence] Auto-restoring history in development:', filteredHistory.length, 'entries');
         setHistory(filteredHistory);
       } else if (!hasHistory) {
         // No history: add empty line after boot messages
-        console.log('[BootSequence] No history to restore');
         setHistory(prev => [...prev, { type: 'output', content: '' }]);
       } else {
         // Production with history: add empty line after boot messages, let parent handle prompt
-        console.log('[BootSequence] Production mode - showing prompt for history restore');
         setHistory(prev => [...prev, { type: 'output', content: '' }]);
       }
       
