@@ -66,6 +66,11 @@ export function useBootSequence(userCity: string, onBootComplete?: (hasHistory: 
       try {
         savedConversation = await conversationStorage.loadConversation();
         hasHistory = !!(savedConversation && savedConversation.length > 0);
+        console.log('[BootSequence] Loaded conversation:', { 
+          hasHistory, 
+          conversationLength: savedConversation?.length,
+          isProduction: process.env.NODE_ENV === 'production'
+        });
       } catch (error) {
         console.error('Failed to load conversation history:', error);
       }
@@ -94,17 +99,23 @@ export function useBootSequence(userCity: string, onBootComplete?: (hasHistory: 
         await new Promise(resolve => setTimeout(resolve, 300));
       }
 
+      // Wait a moment before restoring to ensure messages are displayed
+      await new Promise(resolve => setTimeout(resolve, 500));
+
       // Auto-restore in development, or if no history exists
-      if (!isProduction && hasHistory) {
+      if (!isProduction && hasHistory && savedConversation) {
         // Development: automatically restore
-        // Filter out any undefined entries before setting
-        const filteredHistory = (savedConversation || []).filter(Boolean);
+        // Replace the boot messages with the saved conversation
+        const filteredHistory = savedConversation.filter(Boolean);
+        console.log('[BootSequence] Auto-restoring history in development:', filteredHistory.length, 'entries');
         setHistory(filteredHistory);
       } else if (!hasHistory) {
-        // No history: show normal prompt
+        // No history: add empty line after boot messages
+        console.log('[BootSequence] No history to restore');
         setHistory(prev => [...prev, { type: 'output', content: '' }]);
       } else {
-        // Production with history: just show the boot messages, let parent handle prompt
+        // Production with history: add empty line after boot messages, let parent handle prompt
+        console.log('[BootSequence] Production mode - showing prompt for history restore');
         setHistory(prev => [...prev, { type: 'output', content: '' }]);
       }
       
