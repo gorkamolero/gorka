@@ -641,7 +641,7 @@ export default function Terminal() {
                 value={input}
                 onChange={setInput}
                 onKeyDown={handleKeyDown}
-                showPlaceholder={!hasInteracted}
+                showPlaceholder={!hasInteracted && !showHistoryPrompt && !showResetConfirmation}
                 disabled={isWaitingForResponse}
               />
             )}
