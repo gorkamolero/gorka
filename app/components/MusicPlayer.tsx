@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import YouTube, { YouTubeProps } from 'react-youtube';
+import FocusTrap from 'focus-trap-react';
 import { MUSIC_TRACKS } from '../lib/constants/music';
 
 interface MusicPlayerProps {
@@ -16,9 +17,11 @@ export default function MusicPlayer({ isActive, initialTrack = 0, onClose }: Mus
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
+  const [hasFocus, setHasFocus] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [player, setPlayer] = useState<any>(null);
   const trackRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const playerRef = useRef<HTMLDivElement | null>(null);
 
   // Update current track when initialTrack changes
   useEffect(() => {
@@ -87,11 +90,21 @@ export default function MusicPlayer({ isActive, initialTrack = 0, onClose }: Mus
     setIsPlaying(true);
   }, [currentTrack]);
 
-  // Keyboard navigation
+  // Auto-focus when opened
   useEffect(() => {
-    if (!isActive || isMinimized) return;
+    if (isActive && !isMinimized && playerRef.current) {
+      setTimeout(() => {
+        playerRef.current?.focus();
+      }, 100);
+    }
+  }, [isActive, isMinimized]);
+
+  // Keyboard navigation - only when focused
+  useEffect(() => {
+    if (!isActive || isMinimized || !hasFocus) return;
 
     const handleKeyPress = (e: KeyboardEvent) => {
+      e.stopPropagation();
       switch(e.key) {
         case 'ArrowUp':
         case 'k':
@@ -105,7 +118,6 @@ export default function MusicPlayer({ isActive, initialTrack = 0, onClose }: Mus
           break;
         case 'Enter':
           e.preventDefault();
-          // Play the selected track
           playTrack(selectedTrack);
           break;
         case ' ':
@@ -126,29 +138,60 @@ export default function MusicPlayer({ isActive, initialTrack = 0, onClose }: Mus
           break;
         case 'Tab':
           e.preventDefault();
-          // Return focus to terminal without closing player
-          document.querySelector<HTMLInputElement>('input[type="text"]')?.focus();
+          setHasFocus(false);
+          requestAnimationFrame(() => {
+            document.querySelector<HTMLInputElement>('input[type="text"]')?.focus();
+          });
           break;
         case 'c':
           if (e.ctrlKey) {
             e.preventDefault();
-            // Return focus to terminal without closing player
-            document.querySelector<HTMLInputElement>('input[type="text"]')?.focus();
+            setHasFocus(false);
+            requestAnimationFrame(() => {
+              document.querySelector<HTMLInputElement>('input[type="text"]')?.focus();
+            });
           }
           break;
       }
     };
 
-    window.addEventListener('keydown', handleKeyPress);
-    return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [isActive, isMinimized, player, isPlaying, selectedTrack, onClose, playTrack]);
+    const playerEl = playerRef.current;
+    if (playerEl) {
+      playerEl.addEventListener('keydown', handleKeyPress);
+      return () => playerEl.removeEventListener('keydown', handleKeyPress);
+    }
+  }, [isActive, isMinimized, hasFocus, player, isPlaying, selectedTrack, onClose, playTrack]);
 
   if (!isActive) return null;
 
   return (
-    <div className={`fixed top-4 right-4 z-50 ${isMinimized ? 'w-auto' : 'w-[320px]'}`}>
-      <div className="bg-black border-2 border-green-400 rounded-lg overflow-hidden shadow-2xl" 
-           style={{ boxShadow: '0 0 20px rgba(0, 255, 65, 0.5)' }}>
+    <FocusTrap active={hasFocus && isActive} focusTrapOptions={{ 
+      allowOutsideClick: true,
+      escapeDeactivates: false,
+      clickOutsideDeactivates: true,
+      onDeactivate: () => setHasFocus(false),
+      initialFocus: () => playerRef.current || undefined
+    }}>
+      <div 
+        ref={playerRef}
+        tabIndex={0}
+        className={`fixed top-4 right-4 z-50 ${isMinimized ? 'w-auto' : 'w-[320px]'} outline-none`}
+        onFocus={() => setHasFocus(true)}
+        onBlur={(e) => {
+          if (!e.currentTarget.contains(e.relatedTarget)) {
+            setHasFocus(false);
+          }
+        }}
+        onClick={(e) => {
+          e.stopPropagation();
+          if (!hasFocus) {
+            playerRef.current?.focus();
+            setHasFocus(true);
+          }
+        }}
+      >
+        <div className={`bg-black border-2 ${hasFocus ? 'border-yellow-300' : 'border-green-400'} rounded-lg overflow-hidden shadow-2xl`} 
+             style={{ boxShadow: hasFocus ? '0 0 20px rgba(255, 255, 0, 0.5)' : '0 0 20px rgba(0, 255, 65, 0.5)' }}>
         
         {/* Header */}
         <div className="flex items-center justify-between p-2 border-b border-green-400 bg-black">
@@ -271,12 +314,17 @@ export default function MusicPlayer({ isActive, initialTrack = 0, onClose }: Mus
             {/* Controls */}
             <div className="bg-black border-t border-green-400 p-2 text-center">
               <div className="text-green-400 text-xs font-mono opacity-70">
-                [↑/↓] Navigate | [Enter] Play | [Space] Pause | [Tab/Ctrl+C] Terminal | [q] Close
+                {hasFocus ? (
+                  '[↑/↓] Navigate | [Enter] Play | [Space] Pause | [Tab/Ctrl+C] Terminal | [q] Close'
+                ) : (
+                  'Click to focus for keyboard controls'
+                )}
               </div>
             </div>
           </>
         )}
       </div>
     </div>
+    </FocusTrap>
   );
 }
