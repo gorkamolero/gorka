@@ -40,7 +40,7 @@ const PROJECTS: Project[] = [
     ],
     tech: 'Bun, AI SDK, Mastra, Claude Opus 4',
     github: 'github.com/gorkamolero/cybertantra',
-    image: '/images/cybertantra.png'
+    image: '/images/cybertantra-demo.gif'
   },
   {
     name: 'Music Production',
