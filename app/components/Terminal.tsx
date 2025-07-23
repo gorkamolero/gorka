@@ -16,7 +16,7 @@ import TerminalInput from './TerminalInput';
 import MusicPlayer from './MusicPlayer';
 import WorkBrowser, { formatWorkBrowser } from './WorkBrowser';
 import VimMode from './VimMode';
-import { useTerminalAI } from '../hooks/useTerminalAI';
+import { useTerminalChat } from '../hooks/useTerminalChat';
 import { conversationStorage } from '../lib/storage/conversationStorage';
 
 function TerminalContent() {  
@@ -63,7 +63,7 @@ function TerminalContent() {
   
   const streamingIndexRef = useRef<number | null>(null);
   
-  const { sendMessage } = useTerminalAI({
+  const { sendMessage, initializeWithHistory } = useTerminalChat({
     onMessage: (content, isAI) => {
       if (isAI) {
         setHistory(prev => {
@@ -89,9 +89,22 @@ function TerminalContent() {
         streamingIndexRef.current = null;
         setTimeout(() => inputRef.current?.focus(), 100);
       }
-    },
-    getHistory: () => history.filter(entry => entry && (entry.content.startsWith('> ') || entry.type === 'input'))
+    }
   });
+  
+  // Initialize chat with conversation history only once after boot
+  const initializedRef = useRef(false);
+  useEffect(() => {
+    if (!isBooting && !initializedRef.current && history.length > 0) {
+      const chatHistory = history.filter(entry => 
+        entry && entry.content && (entry.content.includes('> ') || entry.type === 'input')
+      );
+      if (chatHistory.length > 0) {
+        initializeWithHistory(chatHistory);
+        initializedRef.current = true;
+      }
+    }
+  }, [isBooting, history, initializeWithHistory]);
 
   const { executeCommand, replaceLastHistory } = useCommandExecutor(setHistory, setTheme, sendMessage);
 
