@@ -13,7 +13,13 @@
       "WebFetch(domain:github.com)",
       "WebFetch(domain:sdk.vercel.ai)",
       "WebFetch(domain:ai-sdk.dev)",
-      "WebFetch(domain:www.npmjs.com)"
+      "WebFetch(domain:www.npmjs.com)",
+      "Bash(pnpm list ai)",
+      "Bash(grep -A 20 \"export.*streamText\" /Users/gorkolas/www/gorka/node_modules/ai/dist/index.d.ts)",
+      "Bash(grep -B 10 -A 30 \"maxRetries\" /Users/gorkolas/www/gorka/node_modules/ai/dist/index.d.ts)",
+      "Bash(grep -B 10 -A 50 \"declare function streamText\" /Users/gorkolas/www/gorka/node_modules/ai/dist/index.d.ts)",
+      "Bash(pnpm run build)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nfeat: Add automatic fallback from free to regular Kimi model on rate limit\n\nImplemented retry mechanism using ai-fallback package that automatically\nswitches from kimi-k2:free to kimi-k2 when hitting 429 rate limit errors.\n\n🤖 Generated with [Claude Code](https://claude.ai/code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")"
     ],
     "deny": []
   }
