@@ -57,7 +57,7 @@ function TerminalContent() {
     }
   }, [setIsWaitingForResponse]);
 
-  const { messages: aiMessages, sendMessage, initializeWithHistory } = useTerminalChat({
+  const { messages: aiMessages, sendMessage } = useTerminalChat({
     onMessage: () => {}, // Not used anymore
     onLoading: handleChatLoading
   });
@@ -268,23 +268,32 @@ function TerminalContent() {
             ))}
             
             {!isBooting && !workBrowserActive && (
-              <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }} className="flex items-center">
-                <TerminalInput
-                  ref={inputRef}
-                  value={input}
-                  onChange={setInput}
-                  onKeyDown={handleKeyDown}
-                  showPlaceholder={!hasInteracted && !showHistoryPrompt && !showResetConfirmation}
-                  disabled={isWaitingForResponse}
-                />
-                <button 
-                  type="submit" 
-                  className="ml-2 px-2 py-1 text-xs sm:hidden" 
-                  style={{ color: 'var(--color-primary)', border: '1px solid var(--color-primary)' }}
-                  disabled={isWaitingForResponse}
-                >
-                  Send
-                </button>
+              <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }} className="w-full">
+                <div className="flex items-center gap-2">
+                  <div className="flex-1 min-w-0">
+                    <TerminalInput
+                      ref={inputRef}
+                      value={input}
+                      onChange={setInput}
+                      onKeyDown={handleKeyDown}
+                      showPlaceholder={!hasInteracted && !showHistoryPrompt && !showResetConfirmation}
+                      disabled={isWaitingForResponse}
+                    />
+                  </div>
+                  <button 
+                    type="submit" 
+                    className="sm:hidden shrink-0 px-2 py-1 font-mono text-xs whitespace-nowrap" 
+                    style={{ 
+                      color: 'var(--color-primary)', 
+                      backgroundColor: 'transparent',
+                      border: '1px solid var(--color-primary)',
+                      opacity: isWaitingForResponse ? 0.5 : 1
+                    }}
+                    disabled={isWaitingForResponse}
+                  >
+                    [SEND]
+                  </button>
+                </div>
               </form>
             )}
             

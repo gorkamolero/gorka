@@ -1,6 +1,6 @@
 'use client';
 
-import { forwardRef, KeyboardEvent, useState, useEffect } from 'react';
+import { forwardRef, KeyboardEvent, useState, useEffect, useRef } from 'react';
 
 interface TerminalInputProps {
   value: string;
@@ -31,10 +31,31 @@ const CudaSpinner = () => {
 
 const TerminalInput = forwardRef<HTMLInputElement, TerminalInputProps>(
   ({ value, onChange, onKeyDown, showPlaceholder = false, disabled = false }, ref) => {
+    const containerRef = useRef<HTMLDivElement>(null);
+    const [cursorVisible, setCursorVisible] = useState(true);
+    
+    useEffect(() => {
+      if (containerRef.current && ref && 'current' in ref && ref.current) {
+        const container = containerRef.current;
+        
+        // Calculate if cursor would be outside visible area
+        const charWidth = 8; // Approximate width of monospace character
+        const cursorPosition = value.length * charWidth;
+        const containerWidth = container.offsetWidth;
+        
+        // On mobile, hide cursor if it would overflow
+        if (window.innerWidth < 640 && cursorPosition > containerWidth - 80) {
+          setCursorVisible(false);
+        } else {
+          setCursorVisible(true);
+        }
+      }
+    }, [value, ref]);
+    
     return (
-      <div className="flex items-center">
+      <div className="flex items-center w-full">
         <span className="mr-2" style={{ color: 'var(--color-input)' }}>{'>'}</span>
-        <div className="flex-1 relative">
+        <div ref={containerRef} className="flex-1 relative">
           <input
             ref={ref}
             type="text"
@@ -50,13 +71,15 @@ const TerminalInput = forwardRef<HTMLInputElement, TerminalInputProps>(
             spellCheck={false}
             disabled={disabled}
           />
-          <span className="absolute top-0 pointer-events-none" style={{ left: `${value.length}ch`, color: 'var(--color-primary)' }}>
-            {disabled ? (
-              <CudaSpinner />
-            ) : (
-              <span className="inline-block w-2 h-5 animate-pulse" style={{ backgroundColor: 'var(--color-cursor)' }}></span>
-            )}
-          </span>
+          {cursorVisible && (
+            <span className="absolute top-0 pointer-events-none" style={{ left: `${value.length}ch`, color: 'var(--color-primary)' }}>
+              {disabled ? (
+                <CudaSpinner />
+              ) : (
+                <span className="inline-block w-2 h-5 animate-pulse" style={{ backgroundColor: 'var(--color-cursor)' }}></span>
+              )}
+            </span>
+          )}
         </div>
       </div>
     );
