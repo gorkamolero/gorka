@@ -30,6 +30,7 @@ export function useCommandExecutor(
     setVimModeActive,
     setThemeBrowserActive,
     setSelectedTheme,
+    setDattatreyaPlayerActive,
     setShowResetConfirmation,
     closeAllBrowsers
   } = useTerminalContext();
@@ -56,6 +57,11 @@ export function useCommandExecutor(
       const musicDisplay = formatMusicPlayer(0);
       replaceLastHistory(`> ${command}`);
       setHistory(prev => [...prev, { type: 'output', content: musicDisplay }]);
+    } else if (output === 'PLAY_DATTATREYA') {
+      closeAllBrowsers();
+      setDattatreyaPlayerActive(true);
+      replaceLastHistory(`> ${command}`);
+      setHistory(prev => [...prev, { type: 'output', content: '> Opening Dattatreya Mantra player...' }]);
     } else if (output === 'SHOW_WORK_BROWSER') {
       setWorkBrowserActive(true);
       // Always reset to first project when entering work browser

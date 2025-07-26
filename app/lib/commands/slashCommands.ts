@@ -87,6 +87,8 @@ CREATIVE:
 
   "/resume": () => "SHOW_RESUME_BROWSER",
 
+  "/dattatreya": () => "PLAY_DATTATREYA",
+
   "/themes": (args) => {
     if (args.length === 0) {
       return "SHOW_THEME_BROWSER";

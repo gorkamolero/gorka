@@ -16,6 +16,7 @@ import TerminalInput from './TerminalInput';
 import MusicPlayer from './MusicPlayer';
 import WorkBrowser, { formatWorkBrowser } from './WorkBrowser';
 import VimMode from './VimMode';
+import DattatreyaPlayer from './DattatreyaPlayer';
 import { useTerminalChat } from '../hooks/useTerminalChat';
 
 function TerminalContent() {  
@@ -29,6 +30,7 @@ function TerminalContent() {
     workBrowserVisible, setWorkBrowserVisible,
     selectedProject,
     vimModeActive, setVimModeActive,
+    dattatreyaPlayerActive, setDattatreyaPlayerActive,
     showResetConfirmation, setShowResetConfirmation,
     showHistoryPrompt, setShowHistoryPrompt,
     savedHistory, setSavedHistory,
@@ -323,6 +325,11 @@ function TerminalContent() {
         isActive={musicPlayerVisible}
         initialTrack={selectedTrack}
         onClose={() => setMusicPlayerVisible(false)}
+      />
+      
+      <DattatreyaPlayer
+        isActive={dattatreyaPlayerActive}
+        onClose={() => setDattatreyaPlayerActive(false)}
       />
       
       <WorkBrowser

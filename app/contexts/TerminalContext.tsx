@@ -50,6 +50,9 @@ interface TerminalContextType {
   selectedTheme: number;
   setSelectedTheme: (theme: number) => void;
   
+  dattatreyaPlayerActive: boolean;
+  setDattatreyaPlayerActive: (active: boolean) => void;
+  
   // Dialog states
   showResetConfirmation: boolean;
   setShowResetConfirmation: (show: boolean) => void;
@@ -80,6 +83,7 @@ export function TerminalProvider({ children }: { children: ReactNode }) {
   const [vimModeActive, setVimModeActive] = useState(false);
   const [themeBrowserActive, setThemeBrowserActive] = useState(false);
   const [selectedTheme, setSelectedTheme] = useState(0);
+  const [dattatreyaPlayerActive, setDattatreyaPlayerActive] = useState(false);
   const [showResetConfirmation, setShowResetConfirmation] = useState(false);
   const [showHistoryPrompt, setShowHistoryPrompt] = useState(false);
   const [savedHistory, setSavedHistory] = useState<HistoryEntry[] | null>(null);
@@ -93,6 +97,7 @@ export function TerminalProvider({ children }: { children: ReactNode }) {
     setResumeBrowserActive(false);
     setVimModeActive(false);
     setThemeBrowserActive(false);
+    setDattatreyaPlayerActive(false);
   };
 
   const terminalState = {
@@ -112,6 +117,7 @@ export function TerminalProvider({ children }: { children: ReactNode }) {
     vimModeActive, setVimModeActive,
     themeBrowserActive, setThemeBrowserActive,
     selectedTheme, setSelectedTheme,
+    dattatreyaPlayerActive, setDattatreyaPlayerActive,
     showResetConfirmation, setShowResetConfirmation,
     showHistoryPrompt, setShowHistoryPrompt,
     savedHistory, setSavedHistory,
